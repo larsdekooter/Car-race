@@ -8,7 +8,7 @@ import torch
 
 moves = ["UP", "DOWN", "LEFT", "RIGHT"]
 
-DISTANCE = 80
+DISTANCE = 40
 
 
 class Network:
@@ -18,7 +18,8 @@ class Network:
         self.gamma = 0.9
         self.memory = deque(maxlen=100_000)
         self.model = Linear_Qnet(10, 256, 4)
-        self.trainer = QTrainer(self.model, lr=1, gamma=self.gamma)
+        self.model.train(False)
+        self.trainer = QTrainer(self.model, lr=0.001, gamma=self.gamma)
 
         pass
 
@@ -33,21 +34,21 @@ class Network:
             distances.append(line_distances)
         state = [
             # Wall dangers
-            np.min(distances[0]) < DISTANCE if len(distances[0]) > 0 else 0,
-            np.min(distances[1]) < DISTANCE if len(distances[1]) > 0 else 0,
-            np.min(distances[2]) < DISTANCE if len(distances[2]) > 0 else 0,
-            np.min(distances[3]) < DISTANCE if len(distances[3]) > 0 else 0,
-            np.min(distances[4]) < DISTANCE if len(distances[4]) > 0 else 0,
-            np.min(distances[5]) < DISTANCE if len(distances[5]) > 0 else 0,
-            np.min(distances[6]) < DISTANCE if len(distances[6]) > 0 else 0,
-            np.min(distances[7]) < DISTANCE if len(distances[7]) > 0 else 0,
+            np.min(distances[0]) < DISTANCE if len(distances[0]) > 0 else False,
+            np.min(distances[1]) < DISTANCE if len(distances[1]) > 0 else False,
+            np.min(distances[2]) < DISTANCE if len(distances[2]) > 0 else False,
+            np.min(distances[3]) < DISTANCE if len(distances[3]) > 0 else False,
+            np.min(distances[4]) < DISTANCE if len(distances[4]) > 0 else False,
+            np.min(distances[5]) < DISTANCE if len(distances[5]) > 0 else False,
+            np.min(distances[6]) < DISTANCE if len(distances[6]) > 0 else False,
+            np.min(distances[7]) < DISTANCE if len(distances[7]) > 0 else False,
             game.car.speed,
             game.car.angle,
         ]
         return list(np.array(state, dtype=int))
 
     def get_action(self, state):
-        self.epsilon = 80 - self.n_games
+        self.epsilon = 40 - self.n_games
         final_move = [0, 0, 0, 0]
         if random.randint(0, 200) < self.epsilon:
             move = random.randint(0, 3)
@@ -55,7 +56,9 @@ class Network:
         else:
             state0 = torch.tensor(state, dtype=torch.float)
             prediction = self.model(state0)
+            # print(torch.argmin(prediction).item(), torch.argmax(prediction).item())
             move = torch.argmax(prediction).item()
+            print(move)
             final_move[move] = 1
         return final_move
 

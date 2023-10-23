@@ -74,7 +74,7 @@ class Car:
         return dirs
 
     def update_hitbox(self):
-        self.hitbox = (self.x, self.y, 25, 25)
+        self.hitbox = (self.x, self.y, 20, 20)
 
     def copy(self):
         return self
