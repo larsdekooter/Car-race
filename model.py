@@ -9,13 +9,18 @@ class Linear_Qnet(nn.Module):
     def __init__(self, input_size, hidden_size, output_size) -> None:
         super(Linear_Qnet, self).__init__()
         self.linear1 = nn.Linear(input_size, hidden_size)
-        self.linear2 = nn.Linear(hidden_size, hidden_size)
-        self.linear3 = nn.Linear(hidden_size, output_size)
+        self.linear2 = nn.Linear(hidden_size, int(hidden_size/2))
+        self.linear3 = nn.Linear(int(hidden_size/2), output_size)
 
     def forward(self, x):
-        x = F.relu(self.linear1(x))
-        x = F.relu(self.linear2(x))
-        return F.relu(self.linear3(x))
+        #print(x)
+        x = F.tanh(self.linear1(x))
+        #print(x)
+        x = F.tanh(self.linear2(x))
+        #print(x)
+        x = F.sigmoid(self.linear3(x))
+        #print(x, "____")
+        return x
 
     def save(self, file_name="model.pth"):
         model_folder_path = "./model"
