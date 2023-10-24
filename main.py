@@ -23,6 +23,7 @@ def train():
         network.remember(state_old, final_move, reward, state_new, done)
 
         if done:
+            moves = game.car.moves
             game.reset()
             network.n_games += 1
             network.train_long_memory()
@@ -39,7 +40,7 @@ def train():
                 "Record",
                 record,
                 "Most occuring move",
-                max(game.car.moves, key=game.car.moves.count),
+                max(moves, key=moves.count),
             )
 
             plot_scores.append(score)
