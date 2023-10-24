@@ -31,7 +31,16 @@ def train():
                 record = score
                 network.model.save()
 
-            print("Game", network.n_games, "Score", score, "Record", record)
+            print(
+                "Game",
+                network.n_games,
+                "Score",
+                score,
+                "Record",
+                record,
+                "Most occuring move",
+                max(game.car.moves, key=game.car.moves.count),
+            )
 
             plot_scores.append(score)
             total_score += score

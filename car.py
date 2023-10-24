@@ -8,21 +8,7 @@ print(X, Y)
 
 class Car:
     def __init__(self):
-        self.x = X
-        self.y = Y
-        self.speed = 0
-        self.angle = 0
-        self.max_speed = 5
-        self.acceleration = 0.2
-        self.decelaration = 0.5
-        self.turn_speed = 10
-        self.img = pygame.transform.scale(pygame.image.load("car.png"), (25, 25))
-        self.rect = self.img.get_rect()
-        self.hitbox = self.update_hitbox()
-        self.points = 0
-        self.lastline = -1
-        self.times = []
-        self.d = 0
+        self.reset()
 
     def move(self, dirs: list):
         if dirs[1] == 1:
@@ -60,6 +46,7 @@ class Car:
         self.y += y_change
         self.d += x_change + y_change
         self.update_hitbox()
+        self.moves.append(["DOWN", "UP", "LEFT", "RIGHT"][dirs.index(1)])
 
         return pygame.transform.rotate(self.img, self.angle)
 
@@ -97,6 +84,7 @@ class Car:
         self.lastline = -1
         self.times = []
         self.d = 0
+        self.moves = []
 
     def get_looking_direction(self, angle):
         angle_radians = math.radians(angle)
