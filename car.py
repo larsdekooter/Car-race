@@ -46,7 +46,9 @@ class Car:
         self.y += y_change
         self.d += x_change + y_change
         self.update_hitbox()
-        self.moves.append(["DOWN", "UP", "LEFT", "RIGHT"][dirs.index(1)])
+        self.moves.append(
+            ["DOWN", "UP", "LEFT", "RIGHT"][dirs.index(1)]
+        ) if 1 in list else None
 
         return pygame.transform.rotate(self.img, self.angle)
 
