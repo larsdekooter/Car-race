@@ -23,7 +23,7 @@ class Game:
         self.car = car
         self.starttime = time.time()
         self.font = pygame.font.Font("arial.ttf", 32)
-        self.edges = circuit.circuit(self.screen)
+        self.edges = circuit.circuit2(self.screen)
         self.car.draw_raycastlines(self.screen)
         return True
 
@@ -35,19 +35,20 @@ class Game:
         moves: list,
     ):
         reward = 0
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+        self.handle_events()
+        # for event in pygame.event.get():
+        #     if event.type == pygame.QUIT:
+        #         pygame.quit()
+        #         exit()
 
         rotated_car_img = self.car.move(moves)
 
         self.screen.fill("black")
 
         # Box Circuit
-        circuit.circuit(self.screen)
+        circuit.circuit2(self.screen)
         # Point lines
-        succeslines = circuit.point_lines(self.screen)
+        self.point_lines = circuit.point_lines2(self.screen)
 
         hitbox = pygame.draw.rect(
             self.screen,
@@ -55,6 +56,62 @@ class Game:
             self.car.hitbox,
             1,
         )
+        reward, done, self.car.points = self.check_collisions(hitbox, reward)
+        if done:
+            return reward, done, self.car.points
+
+        reward = self.check_points(reward, self.point_lines, hitbox)
+
+        reward = self.handle_reward(reward)
+
+        self.screen.blit(rotated_car_img, (self.car.x, self.car.y))
+        text = self.font.render(str(self.car.points), True, "white", "black")
+        text_rect = text.get_rect()
+        text_rect.centerx += 5
+        text_rect.centery += 5
+        times = time.time() - self.starttime
+        text2 = self.font.render(str((times).__round__(0)), True, "white", "black")
+        text_rect2 = text.get_rect()
+        text_rect2.centerx += 640
+        text_rect2.centery += 360
+        self.car.draw_raycastlines(self.screen)
+        self.screen.blit(text, text_rect)
+        self.screen.blit(text2, text_rect2)
+
+        pygame.display.flip()
+        self.clock.tick(60)
+
+        if times > 50 and self.car.points < 10:
+            reward -= 10
+            return reward, True, self.car.points
+
+        return reward, False, self.car.points
+
+    def get_intersections(self):
+        inters = []
+        for cast in self.car.raycastlines:
+            intersections = cast.get_collision_point(self.edges)
+            inters.append(intersections)
+        return inters
+
+    def get_point_intersections(self):
+        inters = []
+        for cast in self.car.raycastlines:
+            intersections = cast.get_collision_point(self.point_lines)
+            inters.append(intersections)
+        return inters
+
+    def reset(self):
+        self.car.reset()
+        self.starttime = time.time()
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+    def check_collisions(self, hitbox, reward):
         for edge in self.edges:
             if bool(hitbox.clipline(edge.start, edge.end)):
                 self.time = time.time() - self.starttime
@@ -62,7 +119,9 @@ class Game:
                 # pygame.quit()
                 reward = -10
                 return reward, True, self.car.points
+        return reward, False, self.car.points
 
+    def check_points(self, reward, succeslines, hitbox):
         for line in succeslines:
             if hitbox.clipline(line.start, line.end):
                 index = line.i
@@ -73,47 +132,15 @@ class Game:
                     self.car.points += 1
                     executionTime = time.time() - self.starttime
                     self.car.times.append(executionTime)
-                    reward = 10 + self.points / 13
+                    reward = 10  # + self.points / 13 + self.car.d / 10
+                    return reward
+        return reward
 
-        self.screen.blit(rotated_car_img, (self.car.x, self.car.y))
-        text = self.font.render(
-            str(self.car.points) + " " + str(-self.car.speed), True, "white", "black"
-        )
-        text_rect = text.get_rect()
-        text_rect.centerx += 5
-        text_rect.centery += 5
-        times = time.time() - self.starttime
-        text2 = self.font.render(str((times).__round__(0)), True, "white", "black")
-        if times > 5:
-            reward += 1
-        if times > 10:
-            reward += 1
-        if times > 15:
-            reward += 1
-        if times > 20:
-            reward += 1
-        text_rect2 = text.get_rect()
-        text_rect2.centerx += 640
-        text_rect2.centery += 360
+    def handle_reward(self, reward=0):
+        if self.time > 20:
+            reward += 0.001
+        if self.time > 50:
+            reward += 0.01
 
-        # for i in self.get_intersections():
-        #     for j in i:
-        #         pygame.draw.circle(self.screen, "blue", j, 5)
-
-        self.car.draw_raycastlines(self.screen)
-        self.screen.blit(text, text_rect)
-        self.screen.blit(text2, text_rect2)
-        pygame.display.flip()
-        self.clock.tick(60)
-        return reward, False, self.car.points
-
-    def get_intersections(self):
-        inters = []
-        for cast in self.car.raycastlines:
-            intersections = cast.get_collision_point(self.edges)
-            inters.append(intersections)
-        return inters
-
-    def reset(self):
-        self.car.reset()
-        self.starttime = time.time()
+        reward += self.points
+        return reward

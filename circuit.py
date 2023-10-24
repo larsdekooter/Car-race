@@ -109,8 +109,9 @@ def circuit(screen):
             (1175, 600),
             (1100, 700),
         ),
+        # Inner half
         CircuitLine(
-            pygame.draw.line(screen, "white", (170, 650), (1000, 600)),
+            pygame.draw.line(screen, "white", (170, 650), (900, 650)),
             (170, 650),
             (950, 650),
         ),
@@ -175,7 +176,7 @@ def circuit(screen):
             (1000, 600),
         ),
         CircuitLine(
-            pygame.draw.line(screen, "white", (1000, 600), (1000, 600)),
+            pygame.draw.line(screen, "white", (1000, 600), (900, 650)),
             (1000, 600),
             (950, 650),
         ),
@@ -286,5 +287,151 @@ def point_lines(screen):
             pygame.draw.line(screen, "green", (871, 700), (882, 650)),
             (871, 700),
             (882, 650),
+        ),
+        SuccesLine(
+            17,
+            pygame.draw.line(screen, "green", (999, 580), (1181, 580)),
+            (999, 580),
+            (1181, 580),
+        ),
+        SuccesLine(
+            17,
+            pygame.draw.line(screen, "green", (968, 632), (1130, 659)),
+            (968, 632),
+            (1130, 659),
+        ),
+    ]
+
+
+gap = 100
+
+
+def circuit2(screen):
+    return [
+        CircuitLine(
+            pygame.draw.line(screen, "white", (20, 700), (1260, 700)),
+            (20, 700),
+            (1260, 700),
+        ),
+        CircuitLine(
+            pygame.draw.line(screen, "white", (1260, 700), (1260, 20)),
+            (1260, 700),
+            (1260, 20),
+        ),
+        CircuitLine(
+            pygame.draw.line(screen, "white", (1260, 20), (20, 20)),
+            (1260, 20),
+            (20, 20),
+        ),
+        CircuitLine(
+            pygame.draw.line(screen, "white", (20, 20), (20, 700)),
+            (20, 20),
+            (20, 700),
+        ),
+        # inner part
+        CircuitLine(
+            pygame.draw.line(
+                screen, "white", (20 + gap, 700 - gap), (1260 - gap, 700 - gap)
+            ),
+            (20 + gap, 700 - gap),
+            (1260 - gap, 700 - gap),
+        ),
+        CircuitLine(
+            pygame.draw.line(
+                screen, "white", (1260 - gap, 700 - gap), (1260 - gap, 20 + gap)
+            ),
+            (1260 - gap, 700 - gap),
+            (1260 - gap, 20 + gap),
+        ),
+        CircuitLine(
+            pygame.draw.line(
+                screen, "white", (1260 - gap, 20 + gap), (20 + gap, 20 + gap)
+            ),
+            (1260 - gap, 20 + gap),
+            (20 + gap, 20 + gap),
+        ),
+        CircuitLine(
+            pygame.draw.line(
+                screen, "white", (20 + gap, 20 + gap), (20 + gap, 700 - gap)
+            ),
+            (20 + gap, 20 + gap),
+            (20 + gap, 700 - gap),
+        ),
+    ]
+
+
+def point_lines2(screen):
+    return [
+        SuccesLine(
+            1,
+            pygame.draw.line(screen, "green", (20, 350), (20 + gap, 350)),
+            (20, 350),
+            (20 + gap, 350),
+        ),
+        SuccesLine(
+            2,
+            pygame.draw.line(screen, "green", (20, 140), (20 + gap, 140)),
+            (20, 140),
+            (20 + gap, 140),
+        ),
+        SuccesLine(
+            3,
+            pygame.draw.line(screen, "green", (20, 540), (20 + gap, 540)),
+            (20, 540),
+            (20 + gap, 540),
+        ),
+        SuccesLine(
+            4,
+            pygame.draw.line(screen, "green", (1260, 140), (1260 - gap, 140)),
+            (1260, 140),
+            (1260 - gap, 140),
+        ),
+        SuccesLine(
+            5,
+            pygame.draw.line(screen, "green", (1260, 350), (1260 - gap, 350)),
+            (1260, 350),
+            (1260 - gap, 350),
+        ),
+        SuccesLine(
+            6,
+            pygame.draw.line(screen, "green", (1260, 540), (1260 - gap, 540)),
+            (1260, 540),
+            (1260 - gap, 540),
+        ),
+        SuccesLine(
+            7,
+            pygame.draw.line(screen, "green", (1100, 700), (1100, 700 - gap)),
+            (1100, 700),
+            (1100, 700 - gap),
+        ),
+        SuccesLine(
+            8,
+            pygame.draw.line(screen, "green", (600, 700), (600, 700 - gap)),
+            (600, 700),
+            (600, 700 - gap),
+        ),
+        SuccesLine(
+            9,
+            pygame.draw.line(screen, "green", (200, 700), (200, 700 - gap)),
+            (200, 700),
+            (200, 700 - gap),
+        ),
+        SuccesLine(
+            10,
+            pygame.draw.line(screen, "green", (1100, 20), (1100, 20 + gap)),
+            (1100, 20),
+            (1100, 20 + gap),
+        ),
+        SuccesLine(
+            11,
+            pygame.draw.line(screen, "green", (600, 20), (600, 20 + gap)),
+            (600, 20),
+            (600, 20 + gap),
+        ),
+        SuccesLine(
+            12,
+            pygame.draw.line(screen, "green", (200, 20), (200, 20 + gap)),
+            (200, 20),
+            (200, 20 + gap),
         ),
     ]

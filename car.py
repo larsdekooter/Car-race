@@ -2,7 +2,7 @@ import pygame
 import math
 from raycastline import RaycastLine
 
-X, Y = 392, 233
+X, Y = 1208, 496
 print(X, Y)
 
 
@@ -11,7 +11,7 @@ class Car:
         self.x = X
         self.y = Y
         self.speed = 0
-        self.angle = 90
+        self.angle = 0
         self.max_speed = 5
         self.acceleration = 0.2
         self.decelaration = 0.5
@@ -22,6 +22,7 @@ class Car:
         self.points = 0
         self.lastline = -1
         self.times = []
+        self.d = 0
 
     def move(self, dirs: list):
         if dirs[1] == 1:
@@ -57,6 +58,7 @@ class Car:
 
         self.x += x_change
         self.y += y_change
+        self.d += x_change + y_change
         self.update_hitbox()
 
         return pygame.transform.rotate(self.img, self.angle)
@@ -83,7 +85,7 @@ class Car:
         self.x = X
         self.y = Y
         self.speed = 0
-        self.angle = 90
+        self.angle = 0
         self.max_speed = 5
         self.acceleration = 0.2
         self.decelaration = 0.5
@@ -94,6 +96,7 @@ class Car:
         self.points = 0
         self.lastline = -1
         self.times = []
+        self.d = 0
 
     def get_looking_direction(self, angle):
         angle_radians = math.radians(angle)
@@ -159,3 +162,10 @@ class Car:
                 ),
             ),
         ]
+
+    def get_distance_to(self, point):
+        x = point[0]
+        y = point[1]
+        dx = x - self.x
+        dy = y - self.y
+        return math.sqrt(dx * dx + dy * dy)

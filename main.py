@@ -29,7 +29,7 @@ def train():
 
             if score > record:
                 record = score
-                # network.model.save()
+                network.model.save()
 
             print("Game", network.n_games, "Score", score, "Record", record)
 

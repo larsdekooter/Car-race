@@ -8,7 +8,8 @@ import torch
 
 moves = ["UP", "DOWN", "LEFT", "RIGHT"]
 
-DISTANCE = 40
+DISTANCE = 20
+BATCH_SIZE = 100
 
 
 class Network:
@@ -17,38 +18,55 @@ class Network:
         self.epsilon = 0
         self.gamma = 0.9
         self.memory = deque(maxlen=100_000)
-        self.model = Linear_Qnet(10, 256, 4)
+        self.model = Linear_Qnet(18, 256, 4)
         self.model.train(False)
-        self.trainer = QTrainer(self.model, lr=0.001, gamma=self.gamma)
+        self.trainer = QTrainer(self.model, lr=0.00001, gamma=self.gamma)
 
         pass
 
     def get_state(self, game: Game):
         x, y = game.car.x, game.car.y
         intersections = game.get_intersections()
+        point_line_intersections = game.get_point_intersections()
+
         distances = []
         for line in intersections:
             line_distances = []
             for inter in line:
                 line_distances.append(self.get_distance_to_intersection(x, y, inter))
             distances.append(line_distances)
+        point_distances = []
+        for line in point_line_intersections:
+            line_distances = []
+            for inter in line:
+                line_distances.append(self.get_distance_to_intersection(x, y, inter))
+            point_distances.append(line_distances)
         state = [
             # Wall dangers
-            np.min(distances[0]) < DISTANCE if len(distances[0]) > 0 else False,
-            np.min(distances[1]) < DISTANCE if len(distances[1]) > 0 else False,
-            np.min(distances[2]) < DISTANCE if len(distances[2]) > 0 else False,
-            np.min(distances[3]) < DISTANCE if len(distances[3]) > 0 else False,
-            np.min(distances[4]) < DISTANCE if len(distances[4]) > 0 else False,
-            np.min(distances[5]) < DISTANCE if len(distances[5]) > 0 else False,
-            np.min(distances[6]) < DISTANCE if len(distances[6]) > 0 else False,
-            np.min(distances[7]) < DISTANCE if len(distances[7]) > 0 else False,
+            np.min(distances[0]) if len(distances[0]) > 0 else 800,
+            np.min(distances[1]) if len(distances[1]) > 0 else 800,
+            np.min(distances[2]) if len(distances[2]) > 0 else 800,
+            np.min(distances[3]) if len(distances[3]) > 0 else 800,
+            np.min(distances[4]) if len(distances[4]) > 0 else 800,
+            np.min(distances[5]) if len(distances[5]) > 0 else 800,
+            np.min(distances[6]) if len(distances[6]) > 0 else 800,
+            np.min(distances[7]) if len(distances[7]) > 0 else 800,
+            np.min(point_distances[0]) if len(point_distances[0]) > 0 else 800,
+            np.min(point_distances[1]) if len(point_distances[1]) > 0 else 800,
+            np.min(point_distances[2]) if len(point_distances[2]) > 0 else 800,
+            np.min(point_distances[3]) if len(point_distances[3]) > 0 else 800,
+            np.min(point_distances[4]) if len(point_distances[4]) > 0 else 800,
+            np.min(point_distances[5]) if len(point_distances[5]) > 0 else 800,
+            np.min(point_distances[6]) if len(point_distances[6]) > 0 else 800,
+            np.min(point_distances[7]) if len(point_distances[7]) > 0 else 800,
+            # Point line locations
             game.car.speed,
             game.car.angle,
         ]
         return list(np.array(state, dtype=int))
 
     def get_action(self, state):
-        self.epsilon = 40 - self.n_games
+        self.epsilon = 80 - self.n_games
         final_move = [0, 0, 0, 0]
         if random.randint(0, 200) < self.epsilon:
             move = random.randint(0, 3)
@@ -56,10 +74,9 @@ class Network:
         else:
             state0 = torch.tensor(state, dtype=torch.float)
             prediction = self.model(state0)
-            # print(torch.argmin(prediction).item(), torch.argmax(prediction).item())
             move = torch.argmax(prediction).item()
-            print(move)
             final_move[move] = 1
+
         return final_move
 
     def translate_moves(self, moves: list):
@@ -83,8 +100,8 @@ class Network:
         self.memory.append((state, action, reward, next_state, done))
 
     def train_long_memory(self):
-        if len(self.memory) > 1000:
-            mini_sample = random.sample(self.memory, 1000)
+        if len(self.memory) > BATCH_SIZE:
+            mini_sample = random.sample(self.memory, BATCH_SIZE)
         else:
             mini_sample = self.memory
 

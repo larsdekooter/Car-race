@@ -13,9 +13,10 @@ class Linear_Qnet(nn.Module):
         self.linear3 = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
-        x = F.relu(self.linear1(x))
-        x = F.relu(self.linear2(x))
-        return F.relu(self.linear3(x))
+        x = torch.sigmoid(self.linear1(x))
+        x = torch.sigmoid(self.linear2(x))
+        x = torch.sigmoid(self.linear3(x))
+        return x
 
     def save(self, file_name="model.pth"):
         model_folder_path = "./model"
