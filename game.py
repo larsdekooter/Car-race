@@ -23,7 +23,7 @@ class Game:
         self.car = car
         self.starttime = time.time()
         self.font = pygame.font.Font("arial.ttf", 32)
-        self.edges = circuit.circuit3(self.screen)  # circuit.circuit2(self.screen)
+        self.edges = circuit.circuit2(self.screen)  # circuit.circuit2(self.screen)
         self.car.draw_raycastlines(self.screen)
         return True
 
@@ -46,9 +46,9 @@ class Game:
         self.screen.fill("black")
 
         # Box Circuit
-        circuit.circuit3(self.screen)
+        circuit.circuit2(self.screen)
         # Point lines
-        self.point_lines = []  # circuit.point_lines2(self.screen)
+        self.point_lines = circuit.point_lines2(self.screen)
 
         hitbox = pygame.draw.rect(
             self.screen,
@@ -77,6 +77,7 @@ class Game:
         self.car.draw_raycastlines(self.screen)
         self.screen.blit(text, text_rect)
         self.screen.blit(text2, text_rect2)
+        self.draw_intersections()
 
         pygame.display.flip()
         self.clock.tick(60)
@@ -144,3 +145,13 @@ class Game:
 
         reward += self.points
         return reward
+
+    def draw_intersections(self):
+        intersections = self.get_intersections()
+        for line in intersections:
+            for intersection in line:
+                pygame.draw.circle(self.screen, "white", intersection, 5)
+        pointline_intersections = self.get_point_intersections()
+        for line in pointline_intersections:
+            for intersection in line:
+                pygame.draw.circle(self.screen, "green", intersection, 5)
