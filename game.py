@@ -74,7 +74,7 @@ class Game:
         text_rect2 = text.get_rect()
         text_rect2.centerx += 640
         text_rect2.centery += 360
-        self.car.draw_raycastlines(self.screen)
+        self.car.draw_raycastlines(self.screen, 1)
         self.screen.blit(text, text_rect)
         self.screen.blit(text2, text_rect2)
         self.draw_intersections()

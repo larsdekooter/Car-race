@@ -2,13 +2,13 @@ import pygame
 
 
 class RaycastLine:
-    def __init__(self, x, y, screen, direction):
+    def __init__(self, x, y, screen, direction, width=0):
         self.x = x
         self.y = y
         length = 500
         end_point = (x + direction[0] * length, y + direction[1] * length)
         self.endpoint = end_point
-        self.line = pygame.draw.line(screen, "white", (x, y), end_point, 0)
+        self.line = pygame.draw.line(screen, "white", (x, y), end_point, width)
 
     def get_collision_point(self, lines):
         return find_intersection(raycast=self, circuit_lines=lines)

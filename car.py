@@ -91,13 +91,14 @@ class Car:
         angle_radians = math.radians(angle)
         return (math.sin(angle_radians), math.cos(angle_radians))
 
-    def draw_raycastlines(
-        self,
-        screen,
-    ):
+    def draw_raycastlines(self, screen, width=0):
         self.raycastlines = [
             RaycastLine(
-                self.x + 20, self.y + 20, screen, self.get_looking_direction(self.angle)
+                self.x + 20,
+                self.y + 20,
+                screen,
+                self.get_looking_direction(self.angle),
+                width,
             ),
             RaycastLine(
                 self.x + 20,
@@ -107,30 +108,35 @@ class Car:
                     -self.get_looking_direction(self.angle)[0],
                     -self.get_looking_direction(self.angle)[1],
                 ),
+                width,
             ),
             RaycastLine(
                 self.x + 20,
                 self.y + 20,
                 screen,
                 self.get_looking_direction(self.angle + 90),
+                width,
             ),
             RaycastLine(
                 self.x + 20,
                 self.y + 20,
                 screen,
                 self.get_looking_direction(self.angle - 90),
+                width,
             ),
             RaycastLine(
                 self.x + 20,
                 self.y + 20,
                 screen,
                 self.get_looking_direction(self.angle - 45),
+                width,
             ),
             RaycastLine(
                 self.x + 20,
                 self.y + 20,
                 screen,
                 self.get_looking_direction(self.angle + 45),
+                width,
             ),
             RaycastLine(
                 self.x + 20,
@@ -140,6 +146,7 @@ class Car:
                     -self.get_looking_direction(self.angle - 45)[0],
                     -self.get_looking_direction(self.angle - 45)[1],
                 ),
+                width,
             ),
             RaycastLine(
                 self.x + 20,
@@ -149,6 +156,7 @@ class Car:
                     -self.get_looking_direction(self.angle + 45)[0],
                     -self.get_looking_direction(self.angle + 45)[1],
                 ),
+                width,
             ),
         ]
 
