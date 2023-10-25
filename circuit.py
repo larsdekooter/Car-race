@@ -435,3 +435,26 @@ def point_lines2(screen):
             (200, 20 + gap),
         ),
     ]
+
+
+def circuit3(screen):
+    return [
+        CircuitLine(
+            pygame.draw.line(screen, "white", (1270, 710), (1270, 10)),
+            (1270, 710),
+            (1270, 10),
+        ),
+        CircuitLine(
+            pygame.draw.line(screen, "white", (1270, 10), (10, 10)),
+            (1270, 10),
+            (10, 10),
+        ),
+        CircuitLine(
+            pygame.draw.line(screen, "white", (10, 10), (10, 710)), (10, 10), (10, 710)
+        ),
+        CircuitLine(
+            pygame.draw.line(screen, "white", (1270, 710), (10, 710)),
+            (1270, 710),
+            (0, 710),
+        ),
+    ]

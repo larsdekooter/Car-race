@@ -23,7 +23,7 @@ class Game:
         self.car = car
         self.starttime = time.time()
         self.font = pygame.font.Font("arial.ttf", 32)
-        self.edges = circuit.circuit2(self.screen)
+        self.edges = circuit.circuit3(self.screen)  # circuit.circuit2(self.screen)
         self.car.draw_raycastlines(self.screen)
         return True
 
@@ -46,9 +46,9 @@ class Game:
         self.screen.fill("black")
 
         # Box Circuit
-        circuit.circuit2(self.screen)
+        circuit.circuit3(self.screen)
         # Point lines
-        self.point_lines = circuit.point_lines2(self.screen)
+        self.point_lines = []  # circuit.point_lines2(self.screen)
 
         hitbox = pygame.draw.rect(
             self.screen,

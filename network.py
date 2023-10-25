@@ -9,7 +9,7 @@ import torch
 moves = ["UP", "DOWN", "LEFT", "RIGHT"]
 
 DISTANCE = 20
-BATCH_SIZE = 100
+BATCH_SIZE = 1000
 
 
 class Network:
@@ -20,7 +20,8 @@ class Network:
         self.memory = deque(maxlen=100_000)
         self.model = Linear_Qnet(18, 256, 4)
         self.model.train(False)
-        self.trainer = QTrainer(self.model, lr=0.00001, gamma=self.gamma)
+        self.trainer = QTrainer(self.model, lr=0.00025, gamma=self.gamma)
+        self.n_moves = 0
 
         pass
 

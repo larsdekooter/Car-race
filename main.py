@@ -30,7 +30,9 @@ def train():
 
             if score > record:
                 record = score
-                network.model.save()
+                # network.model.save()
+
+            most_occuring_move = max(moves, key=moves.count)
 
             print(
                 "Game",
@@ -40,7 +42,9 @@ def train():
                 "Record",
                 record,
                 "Most occuring move",
-                max(moves, key=moves.count),
+                most_occuring_move,
+                "Contains other moves",
+                len(list(filter(lambda move: move != most_occuring_move, moves))) > 0,
             )
 
             plot_scores.append(score)
