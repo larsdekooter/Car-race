@@ -2,6 +2,8 @@ import pygame
 from car import Car
 import circuit
 import time
+import numpy as np
+import math
 
 # import math
 
@@ -25,6 +27,7 @@ class Game:
         self.font = pygame.font.Font("arial.ttf", 32)
         self.edges = circuit.circuit2(self.screen)  # circuit.circuit2(self.screen)
         self.car.draw_raycastlines(self.screen)
+        self.last_closest_point_line = 0
         return True
 
     def new_episode(self):
@@ -143,6 +146,13 @@ class Game:
         if self.time > 50:
             reward += 0.01
 
+        closest_point = self.get_closest_point()
+
+        if closest_point < self.last_closest_point_line:
+            reward += 3
+            self.last_closest_point_line
+            self.last_closest_point_line = closest_point
+
         reward += self.points
         return reward
 
@@ -155,3 +165,32 @@ class Game:
         for line in pointline_intersections:
             for intersection in line:
                 pygame.draw.circle(self.screen, "green", intersection, 5)
+
+    def get_point_distances(self):
+        point_line_intersections = self.get_point_intersections()
+        point_distances = []
+        for line in point_line_intersections:
+            line_distances = []
+            for inter in line:
+                line_distances.append(
+                    self.get_distance_to_intersection(self.car.x, self.car.y, inter)
+                )
+            point_distances.append(line_distances)
+        return point_distances
+
+    def get_closest_point(self):
+        closest_point = np.min(
+            list(
+                map(
+                    lambda d: np.min(d) if len(d) > 0 else 800,
+                    self.get_point_distances(),
+                )
+            )
+        )
+        return closest_point
+
+    def get_distance_to_intersection(self, x, y, point):
+        pointX, pointY = point[0], point[1]
+        dx = pointX - x
+        dy = pointY - y
+        return math.sqrt(dx * dx + dy * dy)

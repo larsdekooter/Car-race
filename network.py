@@ -22,13 +22,13 @@ class Network:
         self.model.train(False)
         self.trainer = QTrainer(self.model, lr=0.00025, gamma=self.gamma)
         self.n_moves = 0
+        self.logged = False
 
         pass
 
     def get_state(self, game: Game):
         x, y = game.car.x, game.car.y
         intersections = game.get_intersections()
-        point_line_intersections = game.get_point_intersections()
 
         distances = []
         for line in intersections:
@@ -36,12 +36,9 @@ class Network:
             for inter in line:
                 line_distances.append(self.get_distance_to_intersection(x, y, inter))
             distances.append(line_distances)
-        point_distances = []
-        for line in point_line_intersections:
-            line_distances = []
-            for inter in line:
-                line_distances.append(self.get_distance_to_intersection(x, y, inter))
-            point_distances.append(line_distances)
+        point_distances = game.get_point_distances()
+
+        closest_point = game.get_closest_point()
         state = [
             # Wall dangers
             np.min(distances[0]) if len(distances[0]) > 0 else 800,
@@ -52,14 +49,7 @@ class Network:
             np.min(distances[5]) if len(distances[5]) > 0 else 800,
             np.min(distances[6]) if len(distances[6]) > 0 else 800,
             np.min(distances[7]) if len(distances[7]) > 0 else 800,
-            np.min(point_distances[0]) if len(point_distances[0]) > 0 else 800,
-            np.min(point_distances[1]) if len(point_distances[1]) > 0 else 800,
-            np.min(point_distances[2]) if len(point_distances[2]) > 0 else 800,
-            np.min(point_distances[3]) if len(point_distances[3]) > 0 else 800,
-            np.min(point_distances[4]) if len(point_distances[4]) > 0 else 800,
-            np.min(point_distances[5]) if len(point_distances[5]) > 0 else 800,
-            np.min(point_distances[6]) if len(point_distances[6]) > 0 else 800,
-            np.min(point_distances[7]) if len(point_distances[7]) > 0 else 800,
+            closest_point,
             # Point line locations
             game.car.speed,
             game.car.angle,
