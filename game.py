@@ -4,6 +4,7 @@ import circuit
 import time
 import numpy as np
 import math
+from succesline import SuccesLine
 
 # import math
 
@@ -27,7 +28,7 @@ class Game:
         self.font = pygame.font.Font("arial.ttf", 32)
         self.edges = circuit.circuit2(self.screen)  # circuit.circuit2(self.screen)
         self.car.draw_raycastlines(self.screen)
-        self.last_closest_point_line = 0
+        self.last_distance_to_point = 0
         return True
 
     def new_episode(self):
@@ -52,6 +53,8 @@ class Game:
         circuit.circuit2(self.screen)
         # Point lines
         self.point_lines = circuit.point_lines2(self.screen)
+        currentLine = self.point_lines[self.car.current_line]
+        currentLine.draw(self.screen)
 
         hitbox = pygame.draw.rect(
             self.screen,
@@ -78,6 +81,7 @@ class Game:
         text_rect2.centerx += 640
         text_rect2.centery += 360
         self.car.draw_raycastlines(self.screen, 0)
+        # self.draw_intersections()
         self.screen.blit(text, text_rect)
         self.screen.blit(text2, text_rect2)
         # self.draw_intersections()
@@ -85,7 +89,7 @@ class Game:
         pygame.display.flip()
         self.clock.tick(60)
 
-        if times > 50 and self.car.points < 10:
+        if times > 20 and self.car.points < 10:
             reward -= 10
             return reward, True, self.car.points
 
@@ -100,8 +104,9 @@ class Game:
 
     def get_point_intersections(self):
         inters = []
+        point_lines = list(filter(lambda x: x.isDrawn == True, self.point_lines))
         for cast in self.car.raycastlines:
-            intersections = cast.get_collision_point(self.point_lines)
+            intersections = cast.get_collision_point(point_lines)
             inters.append(intersections)
         return inters
 
@@ -127,7 +132,9 @@ class Game:
 
     def check_points(self, reward, succeslines, hitbox):
         for line in succeslines:
-            if hitbox.clipline(line.start, line.end):
+            if not line.isDrawn:
+                pass
+            elif hitbox.clipline(line.start, line.end):
                 index = line.i
                 if self.car.lastline == index:
                     pass
@@ -136,7 +143,10 @@ class Game:
                     self.car.points += 1
                     executionTime = time.time() - self.starttime
                     self.car.times.append(executionTime)
-                    reward = 10  # + self.points / 13 + self.car.d / 10
+                    reward += 10  # + self.points / 13 + self.car.d / 10
+                    self.car.current_line += 1
+                    if self.car.current_line == len(self.point_lines):
+                        self.car.current_line = 0
                     return reward
         return reward
 
@@ -146,15 +156,32 @@ class Game:
         if self.time > 50:
             reward += 0.01
 
-        closest_point = self.get_closest_point()
+        distance = self.get_car_distance_to_current_line()
 
-        if closest_point < self.last_closest_point_line:
+        if distance < self.last_distance_to_point:
             reward += 3
-            self.last_closest_point_line
-            self.last_closest_point_line = closest_point
+            self.last_distance_to_point
+            self.last_distance_to_point = distance
 
         reward += self.points
         return reward
+
+    def get_car_distance_to_current_line(self):
+        current_line = self.point_lines[self.car.current_line]
+
+        distance = np.min(
+            [
+                int(
+                    self.get_distance_to_point(
+                        self.car.x, self.car.y, current_line.start
+                    )
+                ),
+                int(
+                    self.get_distance_to_point(self.car.x, self.car.y, current_line.end)
+                ),
+            ]
+        )
+        return distance
 
     def draw_intersections(self):
         intersections = self.get_intersections()
@@ -173,7 +200,7 @@ class Game:
             line_distances = []
             for inter in line:
                 line_distances.append(
-                    self.get_distance_to_intersection(self.car.x, self.car.y, inter)
+                    self.get_distance_to_point(self.car.x, self.car.y, inter)
                 )
             point_distances.append(line_distances)
         return point_distances
@@ -189,7 +216,7 @@ class Game:
         )
         return closest_point
 
-    def get_distance_to_intersection(self, x, y, point):
+    def get_distance_to_point(self, x, y, point):
         pointX, pointY = point[0], point[1]
         dx = pointX - x
         dy = pointY - y

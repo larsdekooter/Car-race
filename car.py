@@ -2,7 +2,7 @@ import pygame
 import math
 from raycastline import RaycastLine
 
-X, Y = 1208, 496
+X, Y = 69, 650
 print(X, Y)
 
 
@@ -86,6 +86,7 @@ class Car:
         self.times = []
         self.d = 0
         self.moves = []
+        self.current_line = 0
 
     def get_looking_direction(self, angle):
         angle_radians = math.radians(angle)

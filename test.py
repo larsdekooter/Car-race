@@ -77,18 +77,21 @@ while True:
     pygame.draw.line(screen, "white", (1260 - gap, 20 + gap), (20 + gap, 20 + gap)),
     pygame.draw.line(screen, "white", (20 + gap, 20 + gap), (20 + gap, 700 - gap)),
 
-    pygame.draw.line(screen, "green", (20, 350), (20 + gap, 350))
-    pygame.draw.line(screen, "green", (20, 140), (20 + gap, 140))
+    pygame.draw.line(screen, "red", (20, 140), (20 + gap, 140))
+    pygame.draw.line(screen, "orange", (20, 350), (20 + gap, 350))
     pygame.draw.line(screen, "green", (20, 540), (20 + gap, 540))
-    pygame.draw.line(screen, "green", (1260, 140), (1260 - gap, 140))
-    pygame.draw.line(screen, "green", (1260, 350), (1260 - gap, 350))
-    pygame.draw.line(screen, "green", (1260, 540), (1260 - gap, 540))
-    pygame.draw.line(screen, "green", (1100, 700), (1100, 700 - gap))
-    pygame.draw.line(screen, "green", (600, 700), (600, 700 - gap))
-    pygame.draw.line(screen, "green", (200, 700), (200, 700 - gap))
-    pygame.draw.line(screen, "green", (1100, 20), (1100, 20 + gap))
-    pygame.draw.line(screen, "green", (600, 20), (600, 20 + gap))
+
     pygame.draw.line(screen, "green", (200, 20), (200, 20 + gap))
+    pygame.draw.line(screen, "orange", (600, 20), (600, 20 + gap))
+    pygame.draw.line(screen, "red", (1100, 20), (1100, 20 + gap))
+
+    pygame.draw.line(screen, "green", (1260, 140), (1260 - gap, 140))
+    pygame.draw.line(screen, "orange", (1260, 350), (1260 - gap, 350))
+    pygame.draw.line(screen, "red", (1260, 540), (1260 - gap, 540))
+
+    pygame.draw.line(screen, "green", (1100, 700), (1100, 700 - gap))
+    pygame.draw.line(screen, "orange", (600, 700), (600, 700 - gap))
+    pygame.draw.line(screen, "red", (200, 700), (200, 700 - gap))
 
     pygame.display.update()
     screen.fill("black")

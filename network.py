@@ -9,16 +9,16 @@ import torch
 moves = ["UP", "DOWN", "LEFT", "RIGHT"]
 
 DISTANCE = 20
-BATCH_SIZE = 1000
+BATCH_SIZE = 128
 
 
 class Network:
     def __init__(self):
         self.n_games = 0
         self.epsilon = 0
-        self.gamma = 0.9
+        self.gamma = 0.99
         self.memory = deque(maxlen=100_000)
-        self.model = Linear_Qnet(18, 256, 4)
+        self.model = Linear_Qnet(11, 256, 4)
         self.model.train(False)
         self.trainer = QTrainer(self.model, lr=0.00025, gamma=self.gamma)
         self.n_moves = 0
@@ -36,9 +36,8 @@ class Network:
             for inter in line:
                 line_distances.append(self.get_distance_to_intersection(x, y, inter))
             distances.append(line_distances)
-        point_distances = game.get_point_distances()
+        distance = game.get_car_distance_to_current_line()
 
-        closest_point = game.get_closest_point()
         state = [
             # Wall dangers
             np.min(distances[0]) if len(distances[0]) > 0 else 800,
@@ -49,7 +48,7 @@ class Network:
             np.min(distances[5]) if len(distances[5]) > 0 else 800,
             np.min(distances[6]) if len(distances[6]) > 0 else 800,
             np.min(distances[7]) if len(distances[7]) > 0 else 800,
-            closest_point,
+            distance,
             # Point line locations
             game.car.speed,
             game.car.angle,
@@ -65,6 +64,7 @@ class Network:
         else:
             state0 = torch.tensor(state, dtype=torch.float)
             prediction = self.model(state0)
+
             move = torch.argmax(prediction).item()
             final_move[move] = 1
 
