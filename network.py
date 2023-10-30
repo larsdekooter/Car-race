@@ -9,7 +9,7 @@ import torch
 moves = ["UP", "DOWN", "LEFT", "RIGHT"]
 
 DISTANCE = 20
-BATCH_SIZE = 128
+BATCH_SIZE = 100
 
 
 class Network:
@@ -20,10 +20,14 @@ class Network:
         self.memory = deque(maxlen=100_000)
         self.model = Linear_Qnet(11, 256, 4)
         self.model.train(False)
-        self.trainer = QTrainer(self.model, lr=0.00025, gamma=self.gamma)
+        self.trainer = QTrainer(self.model, lr=0.01, gamma=self.gamma)
         self.n_moves = 0
         self.logged = False
-
+        self.minEpsilon = 0.01
+        self.maxEpsilon = 1
+        self.decayRate = 0.00001
+        self.random_this_game = 0
+        self.network_this_game = 0
         pass
 
     def get_state(self, game: Game):
@@ -56,17 +60,21 @@ class Network:
         return list(np.array(state, dtype=int))
 
     def get_action(self, state):
-        self.epsilon = 80 - self.n_games
+        epsilon = self.minEpsilon + (self.maxEpsilon - self.minEpsilon) * np.exp(
+            -self.decayRate * self.n_games
+        )
         final_move = [0, 0, 0, 0]
-        if random.randint(0, 200) < self.epsilon:
+        if np.random.rand() < epsilon:
             move = random.randint(0, 3)
             final_move[move] = 1
+            self.random_this_game += 1
         else:
             state0 = torch.tensor(state, dtype=torch.float)
             prediction = self.model(state0)
 
             move = torch.argmax(prediction).item()
             final_move[move] = 1
+            self.network_this_game += 1
 
         return final_move
 

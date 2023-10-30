@@ -2,6 +2,7 @@ from game import Game
 from network import Network
 import matplotlib.pyplot as plt
 from IPython import display
+import numpy as np
 
 
 def train():
@@ -25,12 +26,16 @@ def train():
         if done:
             moves = game.car.moves
             game.reset()
+            random_this_game = network.random_this_game
+            network_this_game = network.network_this_game
+            network.random_this_game = 0
+            network.network_this_game = 0
             network.n_games += 1
             network.train_long_memory()
 
             if score > record:
                 record = score
-                # network.model.save()
+                network.model.save()
 
             most_occuring_move = max(moves, key=moves.count)
 
@@ -45,6 +50,15 @@ def train():
                 most_occuring_move,
                 "Contains other moves",
                 len(list(filter(lambda move: move != most_occuring_move, moves))) > 0,
+                "random",
+                network.minEpsilon
+                + (network.maxEpsilon - network.minEpsilon)
+                * np.exp(-network.decayRate * network.n_games),
+                "network %",
+                round(
+                    (network_this_game / (network_this_game + random_this_game) * 100),
+                    2,
+                ),
             )
 
             plot_scores.append(score)
@@ -52,6 +66,8 @@ def train():
             mean_score = total_score / (network.n_games)
             plot_mean_scores.append(mean_score)
             # plot(plot_scores, plot_mean_scores)
+            if network.n_games % 100 == 0:
+                network.model.save()
 
 
 plt.ion()
