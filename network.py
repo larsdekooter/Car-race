@@ -28,6 +28,7 @@ class Network:
         self.decayRate = 0.00001
         self.random_this_game = 0
         self.network_this_game = 0
+        self.test_model = torch.load("./model/model.pth")
         pass
 
     def get_state(self, game: Game):
@@ -76,6 +77,15 @@ class Network:
             final_move[move] = 1
             self.network_this_game += 1
 
+        return final_move
+
+    def get_net_action(self, state):
+        final_move = [0, 0, 0, 0]
+        state0 = torch.tensor(state, dtype=torch.float)
+        prediction = self.test_model(state0)
+
+        move = torch.argmax(prediction).item()
+        final_move[move] = 1
         return final_move
 
     def translate_moves(self, moves: list):
