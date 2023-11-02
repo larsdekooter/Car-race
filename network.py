@@ -5,6 +5,7 @@ import random
 import math
 from model import Linear_Qnet, QTrainer
 import torch
+import os
 
 moves = ["UP", "DOWN", "LEFT", "RIGHT"]
 
@@ -19,16 +20,21 @@ class Network:
         self.gamma = 0.99
         self.memory = deque(maxlen=100_000)
         self.model = Linear_Qnet(11, 256, 4)
+        self.model.load_state_dict(torch.load("./model/model.pth"))
         self.model.train(False)
         self.trainer = QTrainer(self.model, lr=0.01, gamma=self.gamma)
         self.n_moves = 0
         self.logged = False
         self.minEpsilon = 0.01
         self.maxEpsilon = 1
-        self.decayRate = 0.00001
+        self.decayRate = 0.1
         self.random_this_game = 0
         self.network_this_game = 0
-        self.test_model = torch.load("./model/model.pth")
+        self.test_model = (
+            torch.load("./model/model.pth")
+            if os.path.exists("./model/model.pth")
+            else None
+        )
         pass
 
     def get_state(self, game: Game):
@@ -74,6 +80,7 @@ class Network:
             prediction = self.model(state0)
 
             move = torch.argmax(prediction).item()
+            print(move)
             final_move[move] = 1
             self.network_this_game += 1
 
@@ -90,6 +97,7 @@ class Network:
             state0 = torch.tensor(state, dtype=torch.float)
             prediction = self.model(state0)
             move = torch.argmax(prediction).item()
+            print(move)
             final_move[move] = 1
             self.network_this_game += 1
         return final_move
