@@ -79,6 +79,21 @@ class Network:
 
         return final_move
 
+    def get_action_start(self, state):
+        self.epsilon = 80 - self.epsilon
+        final_move = [0, 0, 0, 0]
+        if random.randint(0, 200) < self.epsilon:
+            move = random.randint(0, 3)
+            final_move[move] = 1
+            self.random_this_game += 1
+        else:
+            state0 = torch.tensor(state, dtype=torch.float)
+            prediction = self.model(state0)
+            move = torch.argmax(prediction).item()
+            final_move[move] = 1
+            self.network_this_game += 1
+        return final_move
+
     def get_net_action(self, state):
         final_move = [0, 0, 0, 0]
         state0 = torch.tensor(state, dtype=torch.float)
