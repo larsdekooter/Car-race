@@ -27,7 +27,7 @@ class Network:
         self.logged = False
         self.minEpsilon = 0.01
         self.maxEpsilon = 1
-        self.decayRate = 0.1
+        self.decayRate = 0.0001
         self.random_this_game = 0
         self.network_this_game = 0
         self.test_model = (
@@ -80,7 +80,7 @@ class Network:
             prediction = self.model(state0)
 
             move = torch.argmax(prediction).item()
-            print(move)
+#            print(move)
             final_move[move] = 1
             self.network_this_game += 1
 
