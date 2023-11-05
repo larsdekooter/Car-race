@@ -2,7 +2,7 @@ import pygame
 import math
 from raycastline import RaycastLine
 
-X, Y = 69, 650
+X, Y = 1098, 570
 print(X, Y)
 
 

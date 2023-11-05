@@ -96,9 +96,11 @@ def run():
 
     while True:
         state_old = network.get_state(game)
-        final_move = network.translate_moves(network.get_action(state_old))
+        final_move = network.translate_moves(network.get_net_action(state_old))
         reward, done, score = game.step(final_move)
         state_new = network.get_state(game)
+        if done:
+            game.reset()
 
 
 train()

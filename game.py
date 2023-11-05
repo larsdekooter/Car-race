@@ -26,7 +26,7 @@ class Game:
         self.car = car
         self.starttime = time.time()
         self.font = pygame.font.Font("arial.ttf", 32)
-        self.edges = circuit.circuit2(self.screen)  # circuit.circuit2(self.screen)
+        self.edges = circuit.circuit(self.screen)  # circuit.circuit2(self.screen)
         self.car.draw_raycastlines(self.screen)
         self.last_distance_to_point = 0
         return True
@@ -50,9 +50,9 @@ class Game:
         self.screen.fill("black")
 
         # Box Circuit
-        circuit.circuit2(self.screen)
+        circuit.circuit(self.screen)
         # Point lines
-        self.point_lines = circuit.point_lines2(self.screen)
+        self.point_lines = circuit.point_lines(self.screen)
         currentLine = self.point_lines[self.car.current_line]
         currentLine.draw(self.screen)
 
