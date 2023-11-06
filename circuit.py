@@ -187,6 +187,12 @@ def circuit(screen):
 def point_lines(screen):
     return [
         SuccesLine(
+            18,
+            lambda x: pygame.draw.line(screen, "green", (1000, 516), (1189, 530)),
+            (1000, 516),
+            (1189, 530),
+        ),
+        SuccesLine(
             1,
             lambda x: pygame.draw.line(screen, "green", (999, 408), (1102, 348)),
             (999, 408),
