@@ -25,9 +25,9 @@ class Network:
         self.trainer = QTrainer(self.model, lr=0.01, gamma=self.gamma)
         self.n_moves = 0
         self.logged = False
-        self.minEpsilon = 0.00001
+        self.minEpsilon = 0.1
         self.maxEpsilon = 1
-        self.decayRate = 0.0001
+        self.decayRate = 0.00001
         self.random_this_game = 0
         self.network_this_game = 0
 
