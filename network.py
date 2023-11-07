@@ -20,7 +20,7 @@ class Network:
         self.gamma = 0.99
         self.memory = deque(maxlen=100_000)
         self.model = Linear_Qnet(11, 256, 4)
-        self.model.load_state_dict(torch.load("./model/model.pth"))
+        self.model.load_state_dict(torch.load("./model/model.pth")) if os.path.exists('./model/model.pth') else None
         self.model.train(False)
         self.trainer = QTrainer(self.model, lr=0.01, gamma=self.gamma)
         self.n_moves = 0
