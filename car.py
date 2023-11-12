@@ -1,5 +1,6 @@
 import pygame
 import math
+from raycastline import RaycastLine
 
 
 class Car:
@@ -65,3 +66,76 @@ class Car:
         xChange = self.speed * math.sin(radians)
         yChange = self.speed * math.cos(radians)
         return xChange, yChange
+
+    def getLookingDirection(self, angle):
+        angleRadians = math.radians(angle)
+        return (math.sin(angleRadians), math.cos(angleRadians))
+
+    def drawRaycasts(self, screen, width=0):
+        self.raycastlines = [
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                screen,
+                self.getLookingDirection(self.angle),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                screen,
+                (
+                    -self.getLookingDirection(self.angle)[0],
+                    -self.getLookingDirection(self.angle)[1],
+                ),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                screen,
+                self.getLookingDirection(self.angle + 90),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                screen,
+                self.getLookingDirection(self.angle - 90),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                screen,
+                self.getLookingDirection(self.angle - 45),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                screen,
+                self.getLookingDirection(self.angle + 45),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                screen,
+                (
+                    -self.getLookingDirection(self.angle - 45)[0],
+                    -self.getLookingDirection(self.angle - 45)[1],
+                ),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                screen,
+                (
+                    -self.getLookingDirection(self.angle + 45)[0],
+                    -self.getLookingDirection(self.angle + 45)[1],
+                ),
+                width,
+            ),
+        ]

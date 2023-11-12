@@ -30,6 +30,7 @@ class Game:
 
         done = self.checkCircuitCollisions(hitbox)
         self.checkPointCollissions(hitbox)
+        self.car.drawRaycasts(self.screen)
 
         self.screen.blit(rotated_car_img, (self.car.x, self.car.y))
         text = self.font.render(str(self.car.points), True, "white", "black")
