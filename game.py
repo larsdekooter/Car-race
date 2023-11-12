@@ -2,6 +2,7 @@ from car import Car
 import pygame
 import circuit
 import time
+import util
 
 
 class Game:
@@ -14,9 +15,11 @@ class Game:
         self.circuitLines = circuit.circuit(self.screen)
         self.pointLines = circuit.point_lines(self.screen)
         self.starttime = time.time()
+        self.car.drawRaycasts(self.screen)
         pass
 
     def step(self, moves):
+        reward = 0
         self.handleEvents()
         rotated_car_img = self.car.move(moves)
 
@@ -29,8 +32,11 @@ class Game:
         hitbox = pygame.draw.rect(self.screen, "orange", self.car.hitbox, 1)
 
         done = self.checkCircuitCollisions(hitbox)
-        self.checkPointCollissions(hitbox)
+        reward = self.handleRewards(hitbox)
         self.car.drawRaycasts(self.screen)
+
+        if time.time() - self.starttime > 25:
+            done = True
 
         self.screen.blit(rotated_car_img, (self.car.x, self.car.y))
         text = self.font.render(str(self.car.points), True, "white", "black")
@@ -47,7 +53,16 @@ class Game:
 
         pygame.display.flip()
         self.clock.tick(60)
-        return done
+        return reward, done, self.car.points
+
+    def handleRewards(self, hitbox):
+        reward = 0
+        if self.checkPointCollissions(hitbox):
+            reward += 10
+        if time.time() - self.starttime > 20:
+            reward += 3
+
+        return reward
 
     def handleEvents(self):
         for event in pygame.event.get():
@@ -75,6 +90,7 @@ class Game:
                     self.car.currentLine += 1
                     if self.car.currentLine == len(self.pointLines):
                         self.car.currentLine = 0
+                    return True
 
     def reset(self):
         self.car.reset()

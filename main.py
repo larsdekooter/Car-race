@@ -1,13 +1,41 @@
 from game import Game
 import pygame
+from network import Network
 
 
 def train():
     game = Game()
+    network = Network()
+    record = 0
     while True:
-        done = game.step(get_moves())
+        state_old = network.get_state(game)
+        final_move = network.getMove(state_old)
+        reward, done, score = game.step(final_move)
+        stateNew = network.get_state(game)
+        network.trainShort(state_old, final_move, reward, stateNew, done)
+        network.remember(state_old, final_move, reward, stateNew, done)
         if done:
             game.reset()
+            network.ngames += 1
+            network.trainLong()
+            net = network.net
+            rand = network.rand
+            network.net = 0
+            network.rand = 0
+
+            if score > record:
+                network.model.save()
+
+            print(
+                "Game",
+                network.ngames,
+                "Score",
+                score,
+                "Record",
+                record,
+                "%",
+                (net / (net + rand)).__round__(2),
+            )
 
 
 def get_moves():

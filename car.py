@@ -22,6 +22,7 @@ class Car:
         self.points = 0
         self.currentLine = 0
         self.lastLine = -1
+        self.lastDistance = None
 
     def updateHitbox(self):
         self.hitbox = (self.x, self.y, 20, 20)

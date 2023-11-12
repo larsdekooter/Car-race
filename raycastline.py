@@ -1,4 +1,6 @@
 import pygame
+from circuitline import CircuitLine
+from succesline import SuccesLine
 
 
 class RaycastLine:
@@ -10,7 +12,7 @@ class RaycastLine:
         self.endpoint = end_point
         self.line = pygame.draw.line(screen, "white", (x, y), end_point, width)
 
-    def get_collision_point(self, lines):
+    def get_collision_points(self, lines: list[CircuitLine] | list[SuccesLine]):
         return find_intersection(raycast=self, circuit_lines=lines)
 
 
