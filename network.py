@@ -80,6 +80,7 @@ class Network:
         self.gamma = 0.9
         self.memory = deque(maxlen=100_000)
         self.model = LinearQNet(13, 256, 4)
+        self.model.load_state_dict(torch.load("./model/model.pth"))
         self.trainer = QTrainer(self.model, lr=0.001, gamma=self.gamma)
         self.maxEpsilon = 1
         self.minEpsilon = 0.01
