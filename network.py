@@ -125,7 +125,7 @@ class Network:
 
     def getMove(self, state):
         epsilon = self.minEpsilon + (self.maxEpsilon - self.minEpsilon) * np.exp(
-            -self.decayRate * self.ngames * 10
+            -self.decayRate * self.ngames
         )
 
         final_move = [0, 0, 0, 0]
