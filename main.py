@@ -24,6 +24,7 @@ def train():
             network.rand = 0
 
             if score > record:
+                record = score
                 network.model.save()
 
             print(
