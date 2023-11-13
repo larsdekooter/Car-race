@@ -34,7 +34,7 @@ def train():
                 "Record",
                 record,
                 "%",
-                (net / (net + rand)).__round__(2),
+                ((net / (net + rand)) * 100.0).__round__(2),
             )
 
 
