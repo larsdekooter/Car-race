@@ -75,7 +75,7 @@ class QTrainer:
 
 
 class Network:
-    def __init__(self):
+    def __init__(self, training=True):
         self.ngames = 0
         self.gamma = 0.9
         self.memory = deque(maxlen=100_000)
@@ -86,7 +86,8 @@ class Network:
         self.minEpsilon = 0.01
         self.decayRate = 0.00001
         self.decayStep = 0
-        self.training = True
+        self.training = training
+        print(self.training)
         self.net = 0
         self.rand = 0
 

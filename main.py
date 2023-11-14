@@ -1,11 +1,14 @@
 from game import Game
 import pygame
 from network import Network
+import sys
 
 
 def train():
     game = Game()
-    network = Network()
+    network = Network(
+        training=False if len(sys.argv) > 1 and sys.argv[1] == "False" else True
+    )
     record = 0
     while True:
         state_old = network.get_state(game)
