@@ -26,7 +26,7 @@ def train():
             network.net = 0
             network.rand = 0
 
-            if score > record or network.ngames % 100 == 0:
+            if score > record:
                 record = score
                 network.model.save()
 
