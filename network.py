@@ -11,6 +11,7 @@ from succesline import SuccesLine
 from raycastline import RaycastLine
 import util
 import random
+from JSONLoader import JSONLoader
 
 
 class LinearQNet(nn.Module):
@@ -75,18 +76,18 @@ class QTrainer:
 
 
 class Network:
-    def __init__(self, training=True):
+    def __init__(self, data: JSONLoader, training=True):
         self.ngames = 0
-        self.gamma = 0.9
+        self.gamma = data.gamma
         self.memory = deque(maxlen=100_000)
-        self.model = LinearQNet(13, 256, 4)
+        self.model = LinearQNet(13, data.hiddenSize, 4)
         self.model.load_state_dict(torch.load("./model/model.pth")) if os.path.exists(
             "./model/model.pth"
         ) else None
-        self.trainer = QTrainer(self.model, lr=0.001, gamma=self.gamma)
-        self.maxEpsilon = 1
-        self.minEpsilon = 0.01
-        self.decayRate = 0.00001
+        self.trainer = QTrainer(self.model, lr=data.lr, gamma=self.gamma)
+        self.maxEpsilon = data.maxEpsilon
+        self.minEpsilon = data.minEpsilon
+        self.decayRate = data.decayRate
         self.decayStep = 0
         self.training = training
         self.net = 0

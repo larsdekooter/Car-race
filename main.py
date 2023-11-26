@@ -2,12 +2,15 @@ from game import Game
 import pygame
 from network import Network
 import sys
+from JSONLoader import JSONLoader
 
 
 def train():
-    game = Game()
+    data = JSONLoader()
+    game = Game(data)
     network = Network(
-        training=False if len(sys.argv) > 1 and sys.argv[1] == "False" else True
+        training=False if len(sys.argv) > 1 and sys.argv[1] == "False" else True,
+        data=data,
     )
     record = 0
     while True:

@@ -2,12 +2,13 @@ from car import Car
 import pygame
 import circuit
 import time
-import util
+from JSONLoader import JSONLoader
 
 
 class Game:
-    def __init__(self):
-        self.car = Car()
+    def __init__(self, data: JSONLoader):
+        self.data = data
+        self.car = Car(data)
         pygame.init()
         self.screen = pygame.display.set_mode((1280, 720))
         self.clock = pygame.time.Clock()
@@ -58,9 +59,9 @@ class Game:
     def handleRewards(self, hitbox):
         reward = 0
         if self.checkPointCollissions(hitbox):
-            reward += 10
+            reward += self.data.lineReward
         if time.time() - self.starttime > 20:
-            reward += 3
+            reward += self.data.timeReward
 
         return reward
 
