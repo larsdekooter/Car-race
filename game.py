@@ -73,6 +73,8 @@ class Game:
             self.closestDistance = self.car.lastDistance
         elif self.closestDistance == None:
             self.closestDistance = self.car.lastDistance
+        if self.checkCircuitCollisions(hitbox):
+            reward = self.data.hitCost
         self.car.rewardThisGame += reward
         return reward
 

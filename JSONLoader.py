@@ -21,6 +21,7 @@ class JSONLoader:
         self.timeReward = data["timeReward"]
         self.raycastLength = data["raycastLength"]
         self.distanceReward = data["distanceReward"]
+        self.hitCost = data["hitCost"]
         print(
             "lr",
             self.lr,

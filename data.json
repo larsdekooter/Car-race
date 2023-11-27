@@ -14,5 +14,6 @@
   "lineReward": 10,
   "timeReward": 0,
   "raycastLength": 500,
-  "distanceReward": 0.001
+  "distanceReward": 0.001,
+  "hitCost": -100
 }
