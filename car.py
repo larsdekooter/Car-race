@@ -25,6 +25,7 @@ class Car:
         self.currentLine = 0
         self.lastLine = -1
         self.lastDistance = None
+        self.rewardThisGame = 0
 
     def updateHitbox(self):
         self.hitbox = (self.x, self.y, 20, 20)

@@ -103,9 +103,7 @@ class Network:
             distanceToWalls.append(distances)
 
         currentLine = game.pointLines[game.car.currentLine]
-        distance = util.getDistanceToLine(
-            game.car.x, game.car.y, currentLine, game.car.raycastlines
-        )
+        distance = util.getShortestDistanceToLine(game.car.x, game.car.y, currentLine)
         game.car.lastDistance = distance
 
         state = [

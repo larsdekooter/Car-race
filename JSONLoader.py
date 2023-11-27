@@ -20,6 +20,7 @@ class JSONLoader:
         self.lineReward = data["lineReward"]
         self.timeReward = data["timeReward"]
         self.raycastLength = data["raycastLength"]
+        self.distanceReward = data["distanceReward"]
         print(
             "lr",
             self.lr,

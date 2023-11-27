@@ -17,6 +17,7 @@ class Game:
         self.pointLines = circuit.point_lines(self.screen)
         self.starttime = time.time()
         self.car.drawRaycasts(self.screen)
+        self.closestDistance = None
         pass
 
     def step(self, moves):
@@ -62,7 +63,17 @@ class Game:
             reward += self.data.lineReward
         if time.time() - self.starttime > 20:
             reward += self.data.timeReward
-
+        if (
+            self.closestDistance != None
+            and self.car.lastDistance < self.closestDistance
+        ):
+            reward += self.data.distanceReward * (
+                self.closestDistance - self.car.lastDistance
+            )
+            self.closestDistance = self.car.lastDistance
+        elif self.closestDistance == None:
+            self.closestDistance = self.car.lastDistance
+        self.car.rewardThisGame += reward
         return reward
 
     def handleEvents(self):
@@ -96,3 +107,4 @@ class Game:
     def reset(self):
         self.car.reset()
         self.starttime = time.time()
+        self.closestDistance = None
