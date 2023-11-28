@@ -29,6 +29,7 @@ def pretrain(l=64):
             network.trainLong()
             game.reset()
             state = network.get_state(game)
+            print("Pretrain game", i)
         else:
             state = nextState
 
@@ -91,5 +92,5 @@ def get_moves():
     return final_move
 
 
-pretrain(8000000)
+pretrain(800000)
 train()
