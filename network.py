@@ -92,6 +92,7 @@ class Network:
         self.training = training
         self.net = 0
         self.rand = 0
+        self.decayStep = 0
 
     def get_state(self, game: Game):
         distanceToWalls = []
@@ -126,7 +127,7 @@ class Network:
 
     def getMove(self, state):
         epsilon = self.minEpsilon + (self.maxEpsilon - self.minEpsilon) * np.exp(
-            -self.decayRate * self.ngames
+            -self.decayRate * self.decayStep
         )
 
         final_move = [0, 0, 0, 0]
@@ -147,6 +148,7 @@ class Network:
             move = torch.argmax(prediction).item()
             final_move[move] = 1
             self.net += 1
+        self.decayStep += 1
         return final_move
 
     def trainShort(self, state, action, reward, next_state, done):
