@@ -1,5 +1,5 @@
 {
-  "lr": 0.001,
+  "lr": 0.00025,
   "gamma": 0.9,
   "hiddenSize": 256,
   "maxEpsilon": 1,
