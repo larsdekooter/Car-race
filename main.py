@@ -92,5 +92,11 @@ def get_moves():
     return final_move
 
 
-pretrain(800000)
-train()
+if len(sys.argv) > 1 and sys.argv[1] == "False":
+    train()
+elif len(sys.argv) > 1 and sys.argv[1] != "False":
+    pretrain(80000)
+    train()
+elif len(sys.argv) <= 1:
+    pretrain(80000)
+    train()

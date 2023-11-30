@@ -37,7 +37,7 @@ class Game:
         reward = self.handleRewards(hitbox)
         self.car.drawRaycasts(self.screen)
 
-        if time.time() - self.starttime > 25:
+        if time.time() - self.starttime > self.data.time:
             done = True
 
         self.screen.blit(rotated_car_img, (self.car.x, self.car.y))

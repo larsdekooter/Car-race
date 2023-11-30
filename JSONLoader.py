@@ -22,35 +22,5 @@ class JSONLoader:
         self.raycastLength = data["raycastLength"]
         self.distanceReward = data["distanceReward"]
         self.hitCost = data["hitCost"]
-        print(
-            "lr",
-            self.lr,
-            "gamma",
-            self.gamma,
-            "hidden",
-            self.hiddenSize,
-            "maxepsilon",
-            self.maxEpsilon,
-            "minepsilon",
-            self.minEpsilon,
-            "decayrate",
-            self.decayRate,
-            "maxspeed",
-            self.maxSpeed,
-            "x",
-            self.x,
-            "y",
-            self.y,
-            "accel",
-            self.accelaration,
-            "decel",
-            self.decelaration,
-            "turnspeed",
-            self.turnSpeed,
-            "line",
-            self.lineReward,
-            "time",
-            self.timeReward,
-            "length",
-            self.raycastLength,
-        )
+        self.time = data["time"]
+        self.batchSize = data["batchSize"]

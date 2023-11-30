@@ -7,8 +7,6 @@ from collections import deque
 from game import Game
 import math
 import numpy as np
-from succesline import SuccesLine
-from raycastline import RaycastLine
 import util
 import random
 from JSONLoader import JSONLoader
@@ -77,6 +75,7 @@ class QTrainer:
 
 class Network:
     def __init__(self, data: JSONLoader, training=True):
+        self.data = data
         self.ngames = 0
         self.gamma = data.gamma
         self.memory = deque(maxlen=100_000)
@@ -158,8 +157,8 @@ class Network:
         self.memory.append((state, action, reward, next_state, done))
 
     def trainLong(self):
-        if len(self.memory) > 100:
-            mini_sample = random.sample(self.memory, 100)
+        if len(self.memory) > self.data.batchSize:
+            mini_sample = random.sample(self.memory, self.data.batchSize)
         else:
             mini_sample = self.memory
 
