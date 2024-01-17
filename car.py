@@ -82,7 +82,6 @@ class Car:
                 self.y + 10,
                 screen,
                 self.getLookingDirection(self.angle),
-                self.data,
                 width,
             ),
             RaycastLine(
@@ -93,7 +92,6 @@ class Car:
                     -self.getLookingDirection(self.angle)[0],
                     -self.getLookingDirection(self.angle)[1],
                 ),
-                self.data,
                 width,
             ),
             RaycastLine(
@@ -101,7 +99,6 @@ class Car:
                 self.y + 10,
                 screen,
                 self.getLookingDirection(self.angle + 90),
-                self.data,
                 width,
             ),
             RaycastLine(
@@ -109,7 +106,6 @@ class Car:
                 self.y + 10,
                 screen,
                 self.getLookingDirection(self.angle - 90),
-                self.data,
                 width,
             ),
             RaycastLine(
@@ -117,7 +113,6 @@ class Car:
                 self.y + 10,
                 screen,
                 self.getLookingDirection(self.angle - 45),
-                self.data,
                 width,
             ),
             RaycastLine(
@@ -125,7 +120,6 @@ class Car:
                 self.y + 10,
                 screen,
                 self.getLookingDirection(self.angle + 45),
-                self.data,
                 width,
             ),
             RaycastLine(
@@ -136,7 +130,6 @@ class Car:
                     -self.getLookingDirection(self.angle - 45)[0],
                     -self.getLookingDirection(self.angle - 45)[1],
                 ),
-                self.data,
                 width,
             ),
             RaycastLine(
@@ -147,7 +140,6 @@ class Car:
                     -self.getLookingDirection(self.angle + 45)[0],
                     -self.getLookingDirection(self.angle + 45)[1],
                 ),
-                self.data,
                 width,
             ),
         ]
