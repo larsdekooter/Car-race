@@ -54,27 +54,22 @@ class QTrainer:
             reward = torch.unsqueeze(reward, 0)
             done = (done,)
 
-            pred = self.model(state)
+        pred = self.model(state)
 
-            target = pred.clone()
-            for idx in range(len(done)):
-                Q_new = reward[idx]
-                if not done[idx]:
-                    Q_new = reward[idx] + self.gamma * torch.max(
-                        self.model(nextState[idx])
-                    )
-
-                target[idx][torch.argmax(action[idx]).item()] = Q_new
-
-            self.optimizer.zero_grad()
-            loss = self.criterion(target, pred)
-            loss.backward()
-
-            self.optimizer.step()
+        target = pred.clone()
+        for idx in range(len(done)):
+            Q_new = reward[idx]
+            if not done[idx]:
+                Q_new = reward[idx] + self.gamma * torch.max(self.model(nextState[idx]))
+            target[idx][torch.argmax(action[idx]).item()] = Q_new
+        self.optimizer.zero_grad()
+        loss = self.criterion(target, pred)
+        loss.backward()
+        self.optimizer.step()
 
 
 class Network:
-    def __init__(self, training=True):
+    def __init__(self):
         self.ngames = 0
         self.gamma = data.gamma
         self.memory = deque(maxlen=100_000)
@@ -87,7 +82,6 @@ class Network:
         self.minEpsilon = data.minEpsilon
         self.decayRate = data.decayRate
         self.decayStep = 0
-        self.training = training
         self.net = 0
         self.rand = 0
         self.decayStep = 0
@@ -129,17 +123,10 @@ class Network:
         )
 
         final_move = [0, 0, 0, 0]
-        if self.training:
-            if np.random.rand() < epsilon:
-                choice = random.randint(0, 3)
-                final_move[choice] = 1
-                self.rand += 1
-            else:
-                state0 = torch.tensor(state, dtype=torch.float)
-                prediction = self.model(state0)
-                move = torch.argmax(prediction).item()
-                final_move[move] = 1
-                self.net += 1
+        if np.random.rand() < epsilon:
+            choice = random.randint(0, 3)
+            final_move[choice] = 1
+            self.rand += 1
         else:
             state0 = torch.tensor(state, dtype=torch.float)
             prediction = self.model(state0)

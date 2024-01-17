@@ -2,44 +2,11 @@ from game import Game
 import pygame
 from network import Network
 import sys
-import random
-
-
-def pretrain(l=64):
-    game = Game()
-    network = Network(
-        training=False if len(sys.argv) > 1 and sys.argv[1] == "False" else True,
-    )
-    for i in range(l):
-        if i == 0:
-            state = network.get_state(game)
-
-        action = random.randint(0, 3)
-        final_move = [0, 0, 0, 0]
-        final_move[action] = 1
-        reward, done, score = game.step(final_move)
-        nextState = network.get_state(game)
-        network.trainShort(state, final_move, reward, nextState, done)
-        network.remember(state, final_move, reward, nextState, done)
-        if done:
-            reward = -100
-            network.trainLong()
-            game.reset()
-            state = network.get_state(game)
-            print("Pretrain game", i)
-        else:
-            state = nextState
-
-    print(
-        "---------------------------------\nPre training Done\n---------------------------------"
-    )
 
 
 def train():
     game = Game()
-    network = Network(
-        training=False if len(sys.argv) > 1 and sys.argv[1] == "False" else True,
-    )
+    network = Network()
     record = 0
     while True:
         state_old = network.get_state(game)
@@ -87,11 +54,4 @@ def get_moves():
     return final_move
 
 
-if len(sys.argv) > 1 and sys.argv[1] == "False":
-    train()
-elif len(sys.argv) > 1 and sys.argv[1] != "False":
-    pretrain(80000)
-    train()
-elif len(sys.argv) <= 1:
-    pretrain(80000)
-    train()
+train()
