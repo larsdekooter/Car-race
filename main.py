@@ -2,16 +2,13 @@ from game import Game
 import pygame
 from network import Network
 import sys
-from JSONLoader import JSONLoader
 import random
 
 
 def pretrain(l=64):
-    data = JSONLoader()
-    game = Game(data)
+    game = Game()
     network = Network(
         training=False if len(sys.argv) > 1 and sys.argv[1] == "False" else True,
-        data=data,
     )
     for i in range(l):
         if i == 0:
@@ -39,11 +36,9 @@ def pretrain(l=64):
 
 
 def train():
-    data = JSONLoader()
-    game = Game(data)
+    game = Game()
     network = Network(
         training=False if len(sys.argv) > 1 and sys.argv[1] == "False" else True,
-        data=data,
     )
     record = 0
     while True:

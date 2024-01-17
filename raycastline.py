@@ -1,11 +1,11 @@
 import pygame
 from circuitline import CircuitLine
 from succesline import SuccesLine
-from JSONLoader import JSONLoader
+import data
 
 
 class RaycastLine:
-    def __init__(self, x, y, screen, direction, data: JSONLoader, width=0):
+    def __init__(self, x, y, screen, direction, width=0):
         self.x = x
         self.y = y
         length = data.raycastLength

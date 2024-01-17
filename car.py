@@ -1,23 +1,23 @@
 import pygame
 import math
 from raycastline import RaycastLine
-from JSONLoader import JSONLoader
+import data
 
 
 class Car:
-    def __init__(self, data: JSONLoader):
+    def __init__(self):
         self.data = data
         self.reset()
 
     def reset(self):
-        self.maxSpeed = self.data.maxSpeed
-        self.x = self.data.x
-        self.y = self.data.y
+        self.maxSpeed = data.maxSpeed
+        self.x = data.x
+        self.y = data.y
         self.speed = 0
         self.angle = 0
-        self.accelaration = self.data.accelaration
-        self.decelaration = self.data.decelaration
-        self.turnSpeed = self.data.turnSpeed
+        self.accelaration = data.accelaration
+        self.decelaration = data.decelaration
+        self.turnSpeed = data.turnSpeed
         self.img = pygame.transform.scale(pygame.image.load("car.png"), (25, 25))
         self.rect = self.img.get_rect()
         self.hitbox = self.updateHitbox()

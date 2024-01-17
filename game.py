@@ -2,13 +2,12 @@ from car import Car
 import pygame
 import circuit
 import time
-from JSONLoader import JSONLoader
+import data
 
 
 class Game:
-    def __init__(self, data: JSONLoader):
-        self.data = data
-        self.car = Car(data)
+    def __init__(self):
+        self.car = Car()
         pygame.init()
         self.screen = pygame.display.set_mode((1280, 720))
         self.clock = pygame.time.Clock()
@@ -37,7 +36,7 @@ class Game:
         reward = self.handleRewards(hitbox)
         self.car.drawRaycasts(self.screen)
 
-        if time.time() - self.starttime > self.data.time:
+        if time.time() - self.starttime > data.time:
             done = True
 
         self.screen.blit(rotated_car_img, (self.car.x, self.car.y))
@@ -60,21 +59,21 @@ class Game:
     def handleRewards(self, hitbox):
         reward = 0
         if self.checkPointCollissions(hitbox):
-            reward += self.data.lineReward
+            reward += data.lineReward
         if time.time() - self.starttime > 20:
-            reward += self.data.timeReward
+            reward += data.timeReward
         if (
             self.closestDistance != None
             and self.car.lastDistance < self.closestDistance
         ):
-            reward += self.data.distanceReward * (
+            reward += data.distanceReward * (
                 self.closestDistance - self.car.lastDistance
             )
             self.closestDistance = self.car.lastDistance
         elif self.closestDistance == None:
             self.closestDistance = self.car.lastDistance
         if self.checkCircuitCollisions(hitbox):
-            reward = self.data.hitCost
+            reward = data.hitCost
         self.car.rewardThisGame += reward
         return reward
 
