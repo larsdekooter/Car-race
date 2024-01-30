@@ -1,4 +1,4 @@
-lr = 0.00025
+lr = 10**-6
 gamma = 0.9
 hiddenSize = 256
 maxEpsilon = 1
