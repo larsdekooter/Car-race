@@ -13,16 +13,18 @@ import data
 
 
 class LinearQNet(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
+    def __init__(self, input_size, hidden_size, hidden_size2, output_size):
         super().__init__()
-        self.linear1 = nn.Linear(input_size, hidden_size)
-        self.linear2 = nn.Linear(hidden_size, hidden_size)
-        self.linear3 = nn.Linear(hidden_size, output_size)
+        self.stack = nn.Sequential(
+            nn.Linear(input_size, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, hidden_size2),
+            nn.ReLU(),
+            nn.Linear(hidden_size2, output_size),
+        )
 
     def forward(self, x):
-        x = F.relu(self.linear1(x))
-        x = F.relu(self.linear2(x))
-        return self.linear3(x)
+        return self.stack(x)
 
     def save(self, filename="model.pth"):
         modelFolderPath = "./model"
@@ -73,10 +75,7 @@ class Network:
         self.ngames = 0
         self.gamma = data.gamma
         self.memory = deque(maxlen=100_000)
-        self.model = LinearQNet(13, data.hiddenSize, 4)
-        self.model.load_state_dict(torch.load("./model/model.pth")) if os.path.exists(
-            "./model/model.pth"
-        ) else None
+        self.model = LinearQNet(13, data.hiddenSize, data.hiddenSize, 4)
         self.trainer = QTrainer(self.model, lr=data.lr, gamma=self.gamma)
         self.maxEpsilon = data.maxEpsilon
         self.minEpsilon = data.minEpsilon

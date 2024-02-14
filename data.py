@@ -1,6 +1,6 @@
 lr = 10**-6
 gamma = 0.9
-hiddenSize = 256
+hiddenSize = 16
 maxEpsilon = 1
 minEpsilon = 0.01
 decayRate = 10**-5
