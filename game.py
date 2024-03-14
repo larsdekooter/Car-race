@@ -2,6 +2,7 @@ import pygame
 from car import Car
 from circuit import circuit, pointLines
 
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -10,7 +11,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.circuit = circuit(self.screen)
         self.pointLines = pointLines(self.screen)
-        
+
     def step(self, move):
         self.events()
         point, hit = self.basics(move)
@@ -26,7 +27,6 @@ class Game:
         if hit:
             reward = -10
         return reward
-        
 
     def basics(self, move):
         self.screen.fill("black")
@@ -39,20 +39,21 @@ class Game:
 
         hitbox = pygame.draw.rect(self.screen, "orange", self.car.hitbox, 1)
         hit = self.circuitCollision(hitbox)
-        
+
         point = self.pointCollision(hitbox)
         if point:
             self.car.currentLine += 1
+
+        self.car.drawRaycasts(self.screen)
 
         self.screen.blit(carimg, (self.car.x, self.car.y))
         pygame.display.flip()
         self.clock.tick(60)
         return point, hit
 
-
     def circuitCollision(self, hitbox):
         for line in self.circuit:
-            if bool(hitbox.clipline(line.start, line.end)): 
+            if bool(hitbox.clipline(line.start, line.end)):
                 return True
 
     def events(self):

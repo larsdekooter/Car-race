@@ -1,6 +1,6 @@
 from game import Game
 from network import Network
-from time import time
+
 game = Game()
 network = Network()
 
@@ -14,7 +14,6 @@ while True:
     network.remember(oldState, finalmove, reward, stateNew, done)
 
     if done:
-        tm = time()
         net = network.net
         rand = network.rand
         network.net = 0
@@ -24,5 +23,14 @@ while True:
         network.trainLong()
         if score > record:
             record = score
-        
-        print("Game", network.ngames, "Score", score, "REcord", record, "%", round(net / (net + rand) * 100.0, 2))
+
+        print(
+            "Game",
+            network.ngames,
+            "Score",
+            score,
+            "REcord",
+            record,
+            "%",
+            round(net / (net + rand) * 100.0, 2),
+        )
