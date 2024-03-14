@@ -63,7 +63,7 @@ class Network:
         self.ngames = 0
         self.gamma = 0.9
         self.memory = deque(maxlen=100_000)
-        self.model = Net(20, 256, 4)
+        self.model = Net(25, 256, 4)
         self.trainer = Trainer(1e-4, self.gamma, self.model)
         self.maxE = 1
         self.minE = 0.1
@@ -86,7 +86,7 @@ class Network:
             )
         )
         state.extend([game.car.x, game.car.y, game.car.speed, game.car.angle])
-        state = state + ([0] * (20 - len(state)))
+        state = state + ([0] * (25 - len(state)))
         return np.array(state, dtype=float)
 
     def getMove(self, state):
