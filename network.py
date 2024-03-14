@@ -67,7 +67,7 @@ class Network:
         self.trainer = Trainer(1e-4, self.gamma, self.model)
         self.maxE = 1
         self.minE = 0.1
-        self.decayR = 1e-5
+        self.decayR = 1e-6
         self.decayS = 0
         self.net = 0
         self.rand = 0
