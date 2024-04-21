@@ -6,6 +6,7 @@ import numpy as np
 import random
 from time import time
 import math
+import data
 
 
 class Net(nn.Module):
@@ -61,14 +62,14 @@ class Trainer:
 class Network:
     def __init__(self):
         self.ngames = 0
-        self.gamma = 0.9
+        self.gamma = data.gamma
         self.memory = deque(maxlen=100_000)
         self.model = Net(25, 256, 4)
         self.trainer = Trainer(1e-4, self.gamma, self.model)
-        self.maxE = 1
-        self.minE = 0.1
-        self.decayR = 1e-5
-        self.decayS = 0
+        self.maxE = data.maxE
+        self.minE = data.minE
+        self.decayR = data.decayR
+        self.decayS = data.decayS
         self.net = 0
         self.rand = 0
 
