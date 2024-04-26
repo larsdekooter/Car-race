@@ -44,10 +44,10 @@ class QTrainer:
         self.criterion = nn.MSELoss()
 
     def trainStep(self, state, action, reward, nextState, done):
-        state = torch.tensor(state, dtype=torch.float)
-        next_state = torch.tensor(nextState, dtype=torch.float)
-        action = torch.tensor(action, dtype=torch.long)
-        reward = torch.tensor(reward, dtype=torch.float)
+        state = torch.tensor(np.array(state), dtype=torch.float)
+        next_state = torch.tensor(np.array(nextState), dtype=torch.float)
+        action = torch.tensor(np.array(action), dtype=torch.long)
+        reward = torch.tensor(np.array(reward), dtype=torch.float)
         # (n, x)
 
         if len(state.shape) == 1:
