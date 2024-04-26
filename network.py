@@ -45,7 +45,7 @@ class QTrainer:
 
     def trainStep(self, state, action, reward, nextState, done):
         state = torch.tensor(state, dtype=torch.float)
-        next_state = torch.tensor(next_state, dtype=torch.float)
+        next_state = torch.tensor(nextState, dtype=torch.float)
         action = torch.tensor(action, dtype=torch.long)
         reward = torch.tensor(reward, dtype=torch.float)
         # (n, x)
