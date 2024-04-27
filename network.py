@@ -133,21 +133,21 @@ class Network:
         )
 
         final_move = [0, 0, 0, 0]
-        # if np.random.rand() < epsilon:
-        #     choice = random.randint(0, 3)
-        #     final_move[choice] = 1
-        #     self.rand += 1
-        # else:
-        #     state0 = torch.tensor(state, dtype=torch.float)
-        #     prediction = self.model(state0)
-        #     move = torch.argmax(prediction).item()
-        #     final_move[move] = 1
-        #     self.net += 1
-        state0 = torch.tensor(state, dtype=torch.float)
-        prediciton = self.model(state0)
-        move = torch.argmax(prediciton).item()
-        final_move[move] = 1
-        self.net += 1
+        if np.random.rand() < epsilon:
+            choice = random.randint(0, 3)
+            final_move[choice] = 1
+            self.rand += 1
+        else:
+            state0 = torch.tensor(state, dtype=torch.float)
+            prediction = self.model(state0)
+            move = torch.argmax(prediction).item()
+            final_move[move] = 1
+            self.net += 1
+        # state0 = torch.tensor(state, dtype=torch.float)
+        # prediciton = self.model(state0)
+        # move = torch.argmax(prediciton).item()
+        # final_move[move] = 1
+        # self.net += 1
         self.decayStep += 1
         return final_move
 
