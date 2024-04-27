@@ -125,7 +125,7 @@ class Network:
             game.car.angle,
         ]
 
-        return np.array(state, dtype=int)
+        return np.array(state, dtype=float)
 
     def getMove(self, state):
         epsilon = self.minEpsilon + (self.maxEpsilon - self.minEpsilon) * np.exp(
