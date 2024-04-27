@@ -40,11 +40,11 @@ class Car:
         return pygame.transform.rotate(self.img, self.angle)
 
     def handleStraight(self, moves):
-        if moves[0] == 1:
+        if moves[0] == 1:  # backwards
             self.speed += self.accelaration
             if self.speed > self.maxSpeed:
                 self.speed = self.maxSpeed
-        elif moves[1] == 1:
+        elif moves[1] == 1:  # forwards
             self.speed -= self.decelaration
             if self.speed < -self.maxSpeed:
                 self.speed = -self.maxSpeed
@@ -57,11 +57,11 @@ class Car:
                 self.speed = 0
 
     def handleTurns(self, moves):
-        if moves[2] == 1:
+        if moves[2] == 1:  # left
             self.angle += self.turnSpeed
             if self.angle >= 360:
                 self.angle -= 360
-        elif moves[3] == 1:
+        elif moves[3] == 1:  # right
             self.angle -= self.turnSpeed
             if self.angle <= -360:
                 self.angle += 360
