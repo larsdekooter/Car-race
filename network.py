@@ -1,11 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torch.nn.functional as F
 import os
 from collections import deque
 from game import Game
-import math
 import numpy as np
 import util
 import random
@@ -83,7 +81,6 @@ class QTrainer:
 
 class Network:
     def __init__(self):
-        self.ngames = 0
         self.gamma = data.gamma
         self.memory = deque(maxlen=100_000)
         self.model = LinearQNet(13, data.hiddenSize, data.hiddenSize, 4)

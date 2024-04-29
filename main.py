@@ -1,13 +1,11 @@
 from game import Game
 import pygame
 from network import Network
-import sys
 
 
 def train():
     game = Game()
     network = Network()
-    record = 0
     while True:
         state_old = network.get_state(game)
         final_move = network.getMove(state_old)
@@ -17,25 +15,27 @@ def train():
         network.remember(state_old, final_move, reward, stateNew, done)
         if done:
             game.reset()
-            network.ngames += 1
+            game.ngames += 1
             network.trainLong()
             net = network.net
             rand = network.rand
             network.net = 0
             network.rand = 0
 
-            if score > record:
-                record = score
+            if score > game.record:
+                game.record = score
+
+            game.percentage = round((net/(net + rand)) * 100.0, 2)
 
             print(
                 "Game",
-                network.ngames,
+                game.ngames,
                 "Score",
                 score,
                 "Record",
-                record,
+                game.record,
                 "%",
-                ((net / (net + rand)) * 100.0).__round__(2),
+                game.percentage
             )
 
 

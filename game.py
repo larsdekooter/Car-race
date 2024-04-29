@@ -9,7 +9,7 @@ class Game:
     def __init__(self):
         self.car = Car()
         pygame.init()
-        self.screen = pygame.display.set_mode((1280, 720))
+        self.screen = pygame.display.set_mode((1380, 720))
         self.clock = pygame.time.Clock()
         self.font = pygame.font.Font("arial.ttf", 32)
         self.circuitLines = circuit.circuit(self.screen)
@@ -17,7 +17,28 @@ class Game:
         self.starttime = time.time()
         self.car.drawRaycasts(self.screen)
         self.closestDistance = None
-        pass
+        self.record = 0
+        self.ngames = 0
+        self.percentage = 0
+
+    def infoLines(self):
+        pygame.draw.line(self.screen, "white", (1200, 0), (1200, 720), 1)
+        self.text("Speed: " + str(round(self.car.speed, 4) if self.car.speed >= 0 else -round(self.car.speed, 4)), 1210, 5)
+        self.text("Angle: " + str(self.car.angle), 1210, 35)
+        self.text("dX: " + str(int(self.car.currentDistance(self.pointLines[self.car.currentLine]))), 1210, 70)
+        self.text("rew: " + str(int(self.car.rewardThisGame)), 1210, 105)
+        self.text("x " + str(int(self.car.x)), 1210, 140)
+        self.text("y "+ str(int(self.car.y)), 1210, 175)
+        self.text("Record "+ str(self.record), 1210, 210)
+        self.text("Games " + str(self.ngames), 1210, 245)
+        self.text(str(self.percentage) + '%', 1210, 280)
+
+    def text(self, text: str, x: int, y: int):
+        fo = self.font.render(text, True, "white", "black")
+        foT = fo.get_rect()
+        foT.centerx += x
+        foT.centery += y
+        self.screen.blit(fo, foT)
 
     def step(self, moves):
         reward = 0
@@ -51,6 +72,7 @@ class Game:
         textRect2.centery += 360
         self.screen.blit(text, textRect)
         self.screen.blit(text2, textRect2)
+        self.infoLines()
 
         pygame.display.flip()
         self.clock.tick(60)
@@ -103,3 +125,4 @@ class Game:
         self.car.reset()
         self.starttime = time.time()
         self.closestDistance = None
+    
