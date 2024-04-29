@@ -57,21 +57,15 @@ class Game:
         return reward, done, self.car.points
 
     def handleRewards(self, hitbox):
+        lastDistance = self.car.lastDistance
+        distance = self.car.currentDistance(self.pointLines[self.car.currentLine], True)
         reward = 0
         if self.checkPointCollissions(hitbox):
             reward += data.lineReward
         if time.time() - self.starttime > 20:
             reward += data.timeReward
-        if (
-            self.closestDistance != None
-            and self.car.lastDistance < self.closestDistance
-        ):
-            reward += data.distanceReward * (
-                self.closestDistance - self.car.lastDistance
-            )
-            self.closestDistance = self.car.lastDistance
-        elif self.closestDistance == None:
-            self.closestDistance = self.car.lastDistance
+        if (distance < lastDistance):
+            reward += data.distanceReward * (-distance+100)
         if self.checkCircuitCollisions(hitbox):
             reward = data.hitCost
         self.car.rewardThisGame += reward

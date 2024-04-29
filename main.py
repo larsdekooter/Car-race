@@ -8,11 +8,14 @@ def train():
     game = Game()
     network = Network()
     record = 0
-    while True:
+    n = 0
+    while n < 4:
+        n += 1
         state_old = network.get_state(game)
         final_move = network.getMove(state_old)
         reward, done, score = game.step(final_move)
         stateNew = network.get_state(game)
+        print(translate_moves(final_move), reward, game.car.speed)
         network.trainShort(state_old, final_move, reward, stateNew, done)
         network.remember(state_old, final_move, reward, stateNew, done)
         if done:
@@ -52,5 +55,13 @@ def get_moves():
         final_move[0] = 1
     return final_move
 
-
+def translate_moves(move):
+    if move[0] == 1:
+        return "Backwards"
+    elif move[1] == 1:
+        return "Forwards"
+    if move[2] == 1:
+        return "Left"
+    if move[3] == 1:
+        return "Right"
 train()

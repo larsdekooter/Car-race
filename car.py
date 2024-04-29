@@ -2,6 +2,7 @@ import pygame
 import math
 from raycastline import RaycastLine
 import data
+import util
 
 
 class Car:
@@ -24,8 +25,15 @@ class Car:
         self.points = 0
         self.currentLine = 0
         self.lastLine = -1
-        self.lastDistance = None
+        self.lastDistance = 0
         self.rewardThisGame = 0
+    
+    def currentDistance(self, currentLine, update=False):
+        distance = util.getShortestDistanceToLine(self.x, self.y, currentLine)
+        if update:
+            self.lastDistance = distance
+        return distance
+
 
     def updateHitbox(self):
         self.hitbox = (self.x, self.y, 20, 20)
