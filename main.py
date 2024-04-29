@@ -13,7 +13,6 @@ def train():
         final_move = network.getMove(state_old)
         reward, done, score = game.step(final_move)
         stateNew = network.get_state(game)
-        print(translate_moves(final_move), reward, game.car.speed)
         network.trainShort(state_old, final_move, reward, stateNew, done)
         network.remember(state_old, final_move, reward, stateNew, done)
         if done:
