@@ -8,9 +8,7 @@ def train():
     game = Game()
     network = Network()
     record = 0
-    n = 0
-    while n < 4:
-        n += 1
+    while True:
         state_old = network.get_state(game)
         final_move = network.getMove(state_old)
         reward, done, score = game.step(final_move)
