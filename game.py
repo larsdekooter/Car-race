@@ -7,6 +7,7 @@ import data
 
 class Game:
     def __init__(self):
+        self.s = time.time()
         self.car = Car()
         pygame.init()
         self.screen = pygame.display.set_mode((1380, 720))
@@ -32,6 +33,7 @@ class Game:
         self.text("Record "+ str(self.record), 1210, 210)
         self.text("Games " + str(self.ngames), 1210, 245)
         self.text(str(self.percentage) + '%', 1210, 280)
+        self.text("h" + str(int((time.time() - self.s)/3600)), 1210, 315)
 
     def text(self, text: str, x: int, y: int):
         fo = self.font.render(text, True, "white", "black")
