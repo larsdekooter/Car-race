@@ -21,12 +21,22 @@ def getDistanceToLine(x, y, line: SuccesLine, raycasts: list[RaycastLine]):
 
 
 def getShortestDistanceToLine(x, y, line: SuccesLine):
-    x1, y1 = line.start
-    x2, y2 = line.end
-
-    length = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-    dotProduct = ((x - x1) * (x2 - x1)) + ((y - y1) * (y2 - y1))
-    projection = dotProduct / length**2
-    point = (x1 + (projection * (x2 - x1)), y1 + (projection * (y2 - y1)))
-    distance = math.sqrt((x - point[0]) ** 2 + (y - point[1]) ** 2)
+    point = np.asarray([x, y])
+    line_start = np.asarray(line.start)
+    line_end = np.asarray(line.end)
+    line_direction = line_end - line_start
+    point_line_vector = point - line_start
+    line_length = np.linalg.norm(line_direction)
+    t = np.dot(point_line_vector, line_direction) / np.dot(
+        line_direction, line_direction
+    )
+    if t < 0 or t > 1:
+        projection = (
+            line_start
+            if np.linalg.norm(point_line_vector) < np.linalg.norm(point - line_end)
+            else line_end
+        )
+    else:
+        projection = line_start + t * line_direction
+    distance = np.linalg.norm(point - projection)
     return distance
