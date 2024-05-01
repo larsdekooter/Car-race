@@ -48,35 +48,25 @@ class QTrainer:
         reward = torch.tensor(np.array(reward), dtype=torch.float)
         # (n, x)
 
-        if len(state.shape) == 1:
-            # (1, x)
-            state = torch.unsqueeze(state, 0)
-            next_state = torch.unsqueeze(next_state, 0)
-            action = torch.unsqueeze(action, 0)
-            reward = torch.unsqueeze(reward, 0)
-            done = (done,)
-
         # 1: predicted Q values with current state
         pred = self.model(state)
-
-        target = pred.clone()
-        for idx in range(len(done)):
-            Q_new = reward[idx]
-            if not done[idx]:
-                Q_new = reward[idx] + self.gamma * torch.max(
-                    self.model(next_state[idx])
-                )
-
-            target[idx][torch.argmax(action[idx]).item()] = Q_new
-
-        # 2: Q_new = r + y * max(next_predicted Q value) -> only do this if not done
-        # pred.clone()
-        # preds[argmax(action)] = Q_new
-        self.optimizer.zero_grad()
-        loss = self.criterion(target, pred)
+        loss = self.criterion(torch.max(pred), reward)
         loss.backward()
-
         self.optimizer.step()
+        self.optimizer.zero_grad()
+    def trainSteps(self, states, actions, rewards, nextStates, dones):
+        states = torch.tensor(states, dtype=torch.float)
+        nextStates = torch.tensor(nextStates, dtype=torch.float)
+        actions = torch.tensor(actions, dtype=torch.long)
+        rewards = torch.tensor(rewards, dtype=torch.float)
+
+        for i in range(len(dones)):
+            QNew = rewards[i]
+            if not dones[i]:
+                QNew = rewards[i] + self.gamma * torch.max(self.model(nextStates[i]))
+            self.model(states[i])
+        
+        pass
 
 
 class Network:
@@ -161,4 +151,4 @@ class Network:
             mini_sample = self.memory
 
         states, actions, rewards, next_states, dones = zip(*mini_sample)
-        self.trainer.trainStep(states, actions, rewards, next_states, dones)
+        self.trainer.trainSteps(states, actions, rewards, next_states, dones)
