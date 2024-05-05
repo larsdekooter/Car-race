@@ -6,6 +6,8 @@ from network import Network
 def train():
     game = Game()
     network = Network()
+    percentageIndex = 0
+    percentages = [90, 95, 97, 99]
     while True:
         state_old = network.get_state(game)
         final_move = network.getMove(state_old)
@@ -25,7 +27,13 @@ def train():
             if score > game.record:
                 game.record = score
 
-            game.percentage = round((net/(net + rand)) * 100.0, 2)
+            game.percentage = round((net / (net + rand)) * 100.0, 2)
+            if (
+                game.percentage > percentages[percentageIndex]
+                and percentageIndex < len(percentages) - 1
+            ):
+                percentageIndex += 1
+                network.model.save()
 
             print(
                 "Game",
@@ -35,7 +43,7 @@ def train():
                 "Record",
                 game.record,
                 "%",
-                game.percentage
+                game.percentage,
             )
 
 
@@ -52,6 +60,7 @@ def get_moves():
         final_move[0] = 1
     return final_move
 
+
 def translate_moves(move):
     if move[0] == 1:
         return "Backwards"
@@ -61,4 +70,6 @@ def translate_moves(move):
         return "Left"
     if move[3] == 1:
         return "Right"
+
+
 train()

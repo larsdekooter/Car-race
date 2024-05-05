@@ -54,6 +54,7 @@ class QTrainer:
         loss.backward()
         self.optimizer.step()
         self.optimizer.zero_grad()
+
     def trainSteps(self, states, actions, rewards, nextStates, dones):
         states = torch.tensor(states, dtype=torch.float)
         nextStates = torch.tensor(nextStates, dtype=torch.float)
@@ -65,7 +66,7 @@ class QTrainer:
             if not dones[i]:
                 QNew = rewards[i] + self.gamma * torch.max(self.model(nextStates[i]))
             self.model(states[i])
-        
+
         pass
 
 
@@ -73,7 +74,7 @@ class Network:
     def __init__(self):
         self.gamma = data.gamma
         self.memory = deque(maxlen=100_000)
-        self.model = LinearQNet(13, data.hiddenSize, data.hiddenSize, 4)
+        self.model = LinearQNet(3, data.hiddenSize, data.hiddenSize, 4)
         self.trainer = QTrainer(self.model, lr=data.lr, gamma=self.gamma)
         self.maxEpsilon = data.maxEpsilon
         self.minEpsilon = data.minEpsilon
@@ -84,30 +85,30 @@ class Network:
         self.decayStep = 0
 
     def get_state(self, game: Game):
-        distanceToWalls = []
-        for raycast in game.car.raycastlines:
-            points = raycast.get_collision_points(game.circuitLines)
-            distances = []
-            for point in points:
-                distances.append(util.getDistanceToPoint(game.car.x, game.car.y, point))
-            distanceToWalls.append(distances)
+        # distanceToWalls = []
+        # for raycast in game.car.raycastlines:
+        #     points = raycast.get_collision_points(game.circuitLines)
+        #     distances = []
+        #     for point in points:
+        #         distances.append(util.getDistanceToPoint(game.car.x, game.car.y, point))
+        #     distanceToWalls.append(distances)
 
         currentLine = game.pointLines[game.car.currentLine]
         distance = util.getShortestDistanceToLine(game.car.x, game.car.y, currentLine)
         game.car.lastDistance = distance
 
         state = [
-            np.min(distanceToWalls[0]) if len(distanceToWalls[0]) > 0 else 1000,
-            np.min(distanceToWalls[1]) if len(distanceToWalls[1]) > 0 else 1000,
-            np.min(distanceToWalls[2]) if len(distanceToWalls[2]) > 0 else 1000,
-            np.min(distanceToWalls[3]) if len(distanceToWalls[3]) > 0 else 1000,
-            np.min(distanceToWalls[4]) if len(distanceToWalls[4]) > 0 else 1000,
-            np.min(distanceToWalls[5]) if len(distanceToWalls[5]) > 0 else 1000,
-            np.min(distanceToWalls[6]) if len(distanceToWalls[6]) > 0 else 1000,
-            np.min(distanceToWalls[7]) if len(distanceToWalls[7]) > 0 else 1000,
+            # np.min(distanceToWalls[0]) if len(distanceToWalls[0]) > 0 else 1000,
+            # np.min(distanceToWalls[1]) if len(distanceToWalls[1]) > 0 else 1000,
+            # np.min(distanceToWalls[2]) if len(distanceToWalls[2]) > 0 else 1000,
+            # np.min(distanceToWalls[3]) if len(distanceToWalls[3]) > 0 else 1000,
+            # np.min(distanceToWalls[4]) if len(distanceToWalls[4]) > 0 else 1000,
+            # np.min(distanceToWalls[5]) if len(distanceToWalls[5]) > 0 else 1000,
+            # np.min(distanceToWalls[6]) if len(distanceToWalls[6]) > 0 else 1000,
+            # np.min(distanceToWalls[7]) if len(distanceToWalls[7]) > 0 else 1000,
             distance,
-            game.car.x,
-            game.car.y,
+            # game.car.x,
+            # game.car.y,
             game.car.speed,
             game.car.angle,
         ]
