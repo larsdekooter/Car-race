@@ -71,10 +71,10 @@ class QTrainer:
 
 
 class Network:
-    def __init__(self):
+    def __init__(self, load=False):
         self.gamma = data.gamma
         self.memory = deque(maxlen=100_000)
-        self.model = LinearQNet(3, data.hiddenSize, data.hiddenSize, 4)
+        self.model = LinearQNet(11, data.hiddenSize, data.hiddenSize, 4)
         self.trainer = QTrainer(self.model, lr=data.lr, gamma=self.gamma)
         self.maxEpsilon = data.maxEpsilon
         self.minEpsilon = data.minEpsilon
@@ -83,29 +83,31 @@ class Network:
         self.net = 0
         self.rand = 0
         self.decayStep = 0
+        if load:
+            self.model.load_state_dict(torch.load("./model/model.pth"))
 
     def get_state(self, game: Game):
-        # distanceToWalls = []
-        # for raycast in game.car.raycastlines:
-        #     points = raycast.get_collision_points(game.circuitLines)
-        #     distances = []
-        #     for point in points:
-        #         distances.append(util.getDistanceToPoint(game.car.x, game.car.y, point))
-        #     distanceToWalls.append(distances)
+        distanceToWalls = []
+        for raycast in game.car.raycastlines:
+            points = raycast.get_collision_points(game.circuitLines)
+            distances = []
+            for point in points:
+                distances.append(util.getDistanceToPoint(game.car.x, game.car.y, point))
+            distanceToWalls.append(distances)
 
         currentLine = game.pointLines[game.car.currentLine]
         distance = util.getShortestDistanceToLine(game.car.x, game.car.y, currentLine)
         game.car.lastDistance = distance
 
         state = [
-            # np.min(distanceToWalls[0]) if len(distanceToWalls[0]) > 0 else 1000,
-            # np.min(distanceToWalls[1]) if len(distanceToWalls[1]) > 0 else 1000,
-            # np.min(distanceToWalls[2]) if len(distanceToWalls[2]) > 0 else 1000,
-            # np.min(distanceToWalls[3]) if len(distanceToWalls[3]) > 0 else 1000,
-            # np.min(distanceToWalls[4]) if len(distanceToWalls[4]) > 0 else 1000,
-            # np.min(distanceToWalls[5]) if len(distanceToWalls[5]) > 0 else 1000,
-            # np.min(distanceToWalls[6]) if len(distanceToWalls[6]) > 0 else 1000,
-            # np.min(distanceToWalls[7]) if len(distanceToWalls[7]) > 0 else 1000,
+            np.min(distanceToWalls[0]) if len(distanceToWalls[0]) > 0 else 1000,
+            np.min(distanceToWalls[1]) if len(distanceToWalls[1]) > 0 else 1000,
+            np.min(distanceToWalls[2]) if len(distanceToWalls[2]) > 0 else 1000,
+            np.min(distanceToWalls[3]) if len(distanceToWalls[3]) > 0 else 1000,
+            np.min(distanceToWalls[4]) if len(distanceToWalls[4]) > 0 else 1000,
+            np.min(distanceToWalls[5]) if len(distanceToWalls[5]) > 0 else 1000,
+            np.min(distanceToWalls[6]) if len(distanceToWalls[6]) > 0 else 1000,
+            np.min(distanceToWalls[7]) if len(distanceToWalls[7]) > 0 else 1000,
             distance,
             # game.car.x,
             # game.car.y,
@@ -137,6 +139,15 @@ class Network:
         # final_move[move] = 1
         # self.net += 1
         self.decayStep += 1
+        return final_move
+
+    def getMoveSelf(self, state):
+        self.model.train()
+        final_move = [0, 0, 0, 0]
+        state0 = torch.tensor(state, dtype=torch.float)
+        prediction = self.model(state0)
+        move = torch.argmax(prediction).item()
+        final_move[move] = 1
         return final_move
 
     def trainShort(self, state, action, reward, next_state, done):
