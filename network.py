@@ -41,33 +41,21 @@ class QTrainer:
         self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()
 
-    def trainStep(self, state, action, reward, nextState, done):
-        state = torch.tensor(np.array(state), dtype=torch.float)
-        next_state = torch.tensor(np.array(nextState), dtype=torch.float)
-        action = torch.tensor(np.array(action), dtype=torch.long)
-        reward = torch.tensor(np.array(reward), dtype=torch.float)
-        # (n, x)
+    def trainStep(self, states, actions, rewards, nextStates, dones):
+        states = torch.tensor(np.array(states), dtype=torch.float32)
+        actions = torch.tensor(actions, dtype=torch.int64).unsqueeze(1)
+        rewards = torch.tensor(rewards, dtype=torch.float32).unsqueeze(1)
+        nextStates = torch.tensor(np.array(nextStates), dtype=torch.float32)
+        dones = torch.tensor(dones, dtype=torch.float32).unsqueeze(1)
 
-        # 1: predicted Q values with current state
-        pred = self.model(state)
-        loss = self.criterion(torch.max(pred), reward)
+        currenQValues = self.model(states).gather(1, actions)
+        nextQValues = self.model(nextStates).max(1)[0].detach().unsqueeze(1)
+        expectedQValues = rewards + (self.gamma * nextQValues * (1 - dones))
+
+        loss = self.criterion(currenQValues, expectedQValues)
+        self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
-        self.optimizer.zero_grad()
-
-    def trainSteps(self, states, actions, rewards, nextStates, dones):
-        states = torch.tensor(states, dtype=torch.float)
-        nextStates = torch.tensor(nextStates, dtype=torch.float)
-        actions = torch.tensor(actions, dtype=torch.long)
-        rewards = torch.tensor(rewards, dtype=torch.float)
-
-        for i in range(len(dones)):
-            QNew = rewards[i]
-            if not dones[i]:
-                QNew = rewards[i] + self.gamma * torch.max(self.model(nextStates[i]))
-            self.model(states[i])
-
-        pass
 
 
 class Network:
@@ -122,16 +110,14 @@ class Network:
             -self.decayRate * self.decayStep
         )
 
-        final_move = [0, 0, 0, 0]
         if np.random.rand() < epsilon:
-            choice = random.randint(0, 3)
-            final_move[choice] = 1
+            move = random.randint(0, 3)
+            # final_move[choice] = 1
             self.rand += 1
         else:
             state0 = torch.tensor(state, dtype=torch.float)
             prediction = self.model(state0)
             move = torch.argmax(prediction).item()
-            final_move[move] = 1
             self.net += 1
         # state0 = torch.tensor(state, dtype=torch.float)
         # prediciton = self.model(state0)
@@ -139,7 +125,7 @@ class Network:
         # final_move[move] = 1
         # self.net += 1
         self.decayStep += 1
-        return final_move
+        return move
 
     def getMoveSelf(self, state):
         self.model.train()
@@ -157,10 +143,10 @@ class Network:
         self.memory.append((state, action, reward, next_state, done))
 
     def trainLong(self):
-        if len(self.memory) > data.batchSize:
-            mini_sample = random.sample(self.memory, data.batchSize)
-        else:
-            mini_sample = self.memory
+        if len(self.memory) < data.batchSize:
+            return
 
-        states, actions, rewards, next_states, dones = zip(*mini_sample)
-        self.trainer.trainSteps(states, actions, rewards, next_states, dones)
+        batch = random.sample(self.memory, data.batchSize)
+
+        states, actions, rewards, next_states, dones = zip(*batch)
+        self.trainer.trainStep(states, actions, rewards, next_states, dones)
