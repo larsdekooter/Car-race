@@ -16,4 +16,4 @@ raycastLength = 500
 distanceReward = 0.001
 hitCost = -100
 time = 60
-batchSize = 64
+batchSize = 1000
