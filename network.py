@@ -133,8 +133,7 @@ class Network:
         state0 = torch.tensor(state, dtype=torch.float)
         prediction = self.model(state0)
         move = torch.argmax(prediction).item()
-        final_move[move] = 1
-        return final_move
+        return move
 
     def trainShort(self, state, action, reward, next_state, done):
         self.trainer.trainStep(state, action, reward, next_state, done)

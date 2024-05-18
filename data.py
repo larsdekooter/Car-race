@@ -17,3 +17,5 @@ distanceReward = 0.001
 hitCost = -100
 time = 60
 batchSize = 1000
+timeStepPenalty = 0.1
+distancePenalty = 1
