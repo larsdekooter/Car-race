@@ -19,3 +19,5 @@ time = 60
 batchSize = 1000
 timeStepPenalty = 0.1
 distancePenalty = 1
+circlePenalty = 10
+displacementThreshold = 2

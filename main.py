@@ -9,13 +9,12 @@ def train():
     percentageIndex = 0
     percentages = [90, 95, 97, 99]
     while True:
-        final_move = [0, 0, 0, 0]
+        final_move = [0, 0, 0, 0, 0]
         state_old = network.get_state(game)
         move = network.getMove(state_old)
         final_move[move] = 1
         reward, done, score = game.step(final_move)
         stateNew = network.get_state(game)
-        # network.trainShort(state_old, final_move, reward, stateNew, done)
         network.remember(state_old, move, reward, stateNew, done)
         if done:
             game.reset()
@@ -29,7 +28,10 @@ def train():
             if score > game.record:
                 game.record = score
 
-            game.percentage = round((net / (net + rand)) * 100.0, 2)
+            try:
+                game.percentage = round((net / (net + rand)) * 100.0, 2)
+            except:
+                pass
             if (
                 game.percentage > percentages[percentageIndex]
                 and percentageIndex < len(percentages) - 1
@@ -53,14 +55,15 @@ def get_moves():
     keys = pygame.key.get_pressed()
     final_move = [0, 0, 0, 0]
     if keys[pygame.K_LEFT]:
-        final_move[2] = 1
+        return 2
     elif keys[pygame.K_RIGHT]:
-        final_move[3] = 1
+        return 3
     elif keys[pygame.K_UP]:
-        final_move[1] = 1
+        return 1
     elif keys[pygame.K_DOWN]:
-        final_move[0] = 1
-    return final_move
+        return 0
+    else:
+        return 4
 
 
 def translate_moves(move):

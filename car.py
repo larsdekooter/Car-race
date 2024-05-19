@@ -11,6 +11,7 @@ class Car:
         self.reset()
 
     def reset(self):
+        self.positions = []
         self.maxSpeed = data.maxSpeed
         self.x = data.x
         self.y = data.y
@@ -27,13 +28,12 @@ class Car:
         self.lastLine = -1
         self.lastDistance = 0
         self.rewardThisGame = 0
-    
+
     def currentDistance(self, currentLine, update=False):
         distance = util.getShortestDistanceToLine(self.x, self.y, currentLine)
         if update:
             self.lastDistance = distance
         return distance
-
 
     def updateHitbox(self):
         self.hitbox = (self.x, self.y, 20, 20)
@@ -45,7 +45,26 @@ class Car:
         self.x += xChange
         self.y += yChange
         self.updateHitbox()
+        self.positions.append((self.x, self.y))
+        if len(self.positions) > 100:
+            self.positions.pop(0)
         return pygame.transform.rotate(self.img, self.angle)
+
+    def calculateDisplacement(self):
+        if len(self.positions) < 2:
+            return 0
+        startpos = self.positions[0]
+        endpos = self.positions[-1]
+        displacement = (
+            (endpos[0] - startpos[0]) ** 2 + (endpos[1] - startpos[1]) ** 2
+        ) ** 0.5
+        return displacement
+
+    def isMovingInCircles(self):
+        displacement = self.calculateDisplacement()
+        if displacement < data.displacementThreshold:
+            return True
+        return False
 
     def handleStraight(self, moves):
         if moves[0] == 1:  # backwards

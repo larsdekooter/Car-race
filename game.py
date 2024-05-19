@@ -118,10 +118,13 @@ class Game:
 
         # Penalty for collisions
         if self.checkCircuitCollisions(hitbox):
-            reward -= data.hitCost
+            reward += data.hitCost
 
         # Apply a small penalty for each time step to encourage faster completion
         reward -= data.timeStepPenalty
+
+        if self.car.isMovingInCircles():
+            reward -= data.circlePenalty
 
         # Update the total reward for the current game
         self.car.rewardThisGame += reward
