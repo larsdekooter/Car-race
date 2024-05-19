@@ -48,6 +48,8 @@ def train():
                 game.record,
                 "%",
                 game.percentage,
+                "steps",
+                network.decayStep,
             )
 
 

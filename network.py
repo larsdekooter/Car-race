@@ -67,7 +67,6 @@ class Network:
         self.maxEpsilon = data.maxEpsilon
         self.minEpsilon = data.minEpsilon
         self.decayRate = data.decayRate
-        self.decayStep = 0
         self.net = 0
         self.rand = 0
         self.decayStep = 0
@@ -115,10 +114,13 @@ class Network:
             # final_move[choice] = 1
             self.rand += 1
         else:
-            state0 = torch.tensor(state, dtype=torch.float)
-            prediction = self.model(state0)
-            move = torch.argmax(prediction).item()
-            self.net += 1
+            with torch.no_grad():
+                state0 = torch.tensor(state, dtype=torch.float)
+                prediction = self.model(state0)
+                noise = torch.randn(prediction.size()) * 0.1
+                prediction += noise
+                move = prediction.argmax().item()
+                self.net += 1
         # state0 = torch.tensor(state, dtype=torch.float)
         # prediciton = self.model(state0)
         # move = torch.argmax(prediciton).item()
