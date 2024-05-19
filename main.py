@@ -1,6 +1,7 @@
 from game import Game
 import pygame
 from network import Network
+import data
 
 
 def train():
@@ -51,6 +52,8 @@ def train():
                 "steps",
                 network.decayStep,
             )
+            if game.ngames % 10 == 0:
+                network.trainer.trainTarget()
 
 
 def get_moves():

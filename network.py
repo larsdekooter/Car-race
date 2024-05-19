@@ -8,6 +8,7 @@ import numpy as np
 import util
 import random
 import data
+from copy import deepcopy
 
 
 class LinearQNet(nn.Module):
@@ -34,12 +35,16 @@ class LinearQNet(nn.Module):
 
 
 class QTrainer:
-    def __init__(self, model, lr, gamma):
+    def __init__(self, model: LinearQNet, lr, gamma):
         self.lr = lr
         self.gamma = gamma
         self.model = model
         self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()
+        self.targetModel = deepcopy(model)
+
+    def trainTarget(self):
+        self.targetModel.load_state_dict(self.model.state_dict())
 
     def trainStep(self, states, actions, rewards, nextStates, dones):
         states = torch.tensor(np.array(states), dtype=torch.float32)
@@ -49,7 +54,8 @@ class QTrainer:
         dones = torch.tensor(dones, dtype=torch.float32).unsqueeze(1)
 
         currenQValues = self.model(states).gather(1, actions)
-        nextQValues = self.model(nextStates).max(1)[0].detach().unsqueeze(1)
+        nextStateActions = self.model(nextStates).max(1)[0].detach().unsqueeze(1)
+        nextQValues = self.targetModel(nextStates).gather(1, nextStateActions).detach()
         expectedQValues = rewards + (self.gamma * nextQValues * (1 - dones))
 
         loss = self.criterion(currenQValues, expectedQValues)
