@@ -44,7 +44,7 @@ class Game:
         self.text("rew: " + str(int(self.car.rewardThisGame)), 1210, 105)
         self.text("x " + str(int(self.car.x)), 1210, 140)
         self.text("y " + str(int(self.car.y)), 1210, 175)
-        self.text("Record " + str(self.record), 1210, 210)
+        self.text("R " + str(self.record), 1210, 210)
         self.text("nG " + str(self.ngames), 1210, 245)
         self.text(str(self.percentage) + "%", 1210, 280)
         self.text("h" + str(round((time.time() - self.s) / 3600, 2)), 1210, 315)
