@@ -21,3 +21,4 @@ timeStepPenalty = 0.1
 distancePenalty = 1
 circlePenalty = 50
 displacementThreshold = 2
+targetUpdate = 10

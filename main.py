@@ -52,7 +52,7 @@ def train():
                 "steps",
                 network.decayStep,
             )
-            if game.ngames % 10 == 0:
+            if game.ngames % data.targetUpdate == 0:
                 network.trainer.trainTarget()
 
 
