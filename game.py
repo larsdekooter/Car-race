@@ -101,32 +101,24 @@ class Game:
         )
         reward = 0
 
-        # Reward for passing checkpoints
         if self.checkPointCollissions(hitbox):
             reward += data.lineReward
 
-        # Continuous time-based reward
         elapsed_time = time.time() - self.starttime
         if elapsed_time > 20:
             reward += data.timeReward
 
-        # Reward for reducing the distance to the next checkpoint
         if currentDistance < lastDistance:
             reward += data.distanceReward * (lastDistance - currentDistance)
         else:
             reward -= data.distancePenalty * (currentDistance - lastDistance)
 
-        # Penalty for collisions
         if self.checkCircuitCollisions(hitbox):
-            reward += data.hitCost
-
-        # Apply a small penalty for each time step to encourage faster completion
-        reward -= data.timeStepPenalty
+            reward -= data.hitCost
 
         if self.car.isMovingInCircles():
             reward -= data.circlePenalty
 
-        # Update the total reward for the current game
         self.car.rewardThisGame += reward
 
         return reward
