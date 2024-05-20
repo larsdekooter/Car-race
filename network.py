@@ -54,7 +54,7 @@ class QTrainer:
         dones = torch.tensor(dones, dtype=torch.float32).unsqueeze(1)
 
         currenQValues = self.model(states).gather(1, actions)
-        nextStateActions = self.model(nextStates).max(1)[0].detach().unsqueeze(1)
+        nextStateActions = self.model(nextStates).max(1)[1].unsqueeze(1).to(torch.int64)
         nextQValues = self.targetModel(nextStates).gather(1, nextStateActions).detach()
         expectedQValues = rewards + (self.gamma * nextQValues * (1 - dones))
 
