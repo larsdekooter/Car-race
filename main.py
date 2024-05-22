@@ -9,23 +9,15 @@ def train():
     network = Network()
     percentageIndex = 0
     percentages = [90, 95, 97, 99]
-    n = 0
-    moves = [
-        reverseTranslateMoves("F"),
-        reverseTranslateMoves("F"),
-        reverseTranslateMoves("F"),
-        reverseTranslateMoves("F"),
-    ]
-    while n < 2:
-        n += 1
+
+    while True:
         final_move = [0, 0, 0, 0, 0]
         state_old = network.get_state(game)
-        move = moves[n]  # network.getMove(state_old)
+        move = network.getMove(state_old)
         final_move[move] = 1
         reward, done, score = game.step(final_move)
         stateNew = network.get_state(game)
         network.remember(state_old, move, reward, stateNew, done)
-        print(move, reward)
         if done:
             game.reset()
             game.ngames += 1
