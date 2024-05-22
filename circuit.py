@@ -1,20 +1,7 @@
 import pygame
 from circuitline import CircuitLine
 from succesline import SuccesLine
-
-
-class Functions:
-    def f1(x):
-        return (x, 600)
-
-    def f2(y):
-        return (140, y)
-
-    def f3(x):
-        return (x, 25 / 140 * x + 525)
-
-    def f4(x):
-        return (x, -3 * x + 620.356)
+import numpy as np
 
 
 def circuit(screen):
@@ -185,128 +172,130 @@ def circuit(screen):
 
 
 def point_lines(screen):
-    return [
-        SuccesLine(
-            1,
-            lambda x: pygame.draw.line(screen, "green", (1000, 516), (1189, 530)),
-            (1000, 516),
-            (1189, 530),
-        ),
-        SuccesLine(
-            2,
-            lambda x: pygame.draw.line(screen, "green", (1000, 454), (1159, 425)),
-            (1000, 454),
-            (1159, 425),
-        ),
-        SuccesLine(
-            3,
-            lambda x: pygame.draw.line(screen, "green", (999, 408), (1102, 348)),
-            (999, 408),
-            (1102, 348),
-        ),
-        SuccesLine(
-            4,
-            lambda x: pygame.draw.line(screen, "green", (951, 403), (949, 352)),
-            (951, 403),
-            (949, 352),
-        ),
-        SuccesLine(
-            5,
-            lambda x: pygame.draw.line(screen, "green", (838, 470), (830, 427)),
-            (838, 470),
-            (830, 427),
-        ),
-        SuccesLine(
-            6,
-            lambda x: pygame.draw.line(screen, "green", (708, 460), (701, 507)),
-            (708, 460),
-            (701, 507),
-        ),
-        SuccesLine(
-            7,
-            lambda x: pygame.draw.line(screen, "green", (561, 517), (568, 475)),
-            (561, 517),
-            (568, 475),
-        ),
-        SuccesLine(
-            8,
-            lambda x: pygame.draw.line(screen, "green", (512, 443), (560, 457)),
-            (512, 443),
-            (560, 457),
-        ),
-        SuccesLine(
-            9,
-            lambda x: pygame.draw.line(screen, "green", (573, 303), (635, 259)),
-            (573, 303),
-            (635, 259),
-        ),
-        SuccesLine(
-            10,
-            lambda x: pygame.draw.line(screen, "green", (469, 265), (474, 218)),
-            (469, 265),
-            (474, 218),
-        ),
-        SuccesLine(
-            11,
-            lambda x: pygame.draw.line(screen, "green", (262, 247), (276, 203)),
-            (262, 247),
-            (276, 203),
-        ),
-        SuccesLine(
-            12,
-            lambda x: pygame.draw.line(screen, "green", (161, 293), (117, 241)),
-            (161, 293),
-            (117, 241),
-        ),
-        SuccesLine(
-            13,
-            lambda x: pygame.draw.line(screen, "green", (42, 429), (93, 432)),
-            (42, 429),
-            (93, 432),
-        ),
-        SuccesLine(
-            14,
-            lambda x: pygame.draw.line(screen, "green", (55, 599), (108, 583)),
-            (55, 599),
-            (108, 583),
-        ),
-        SuccesLine(
-            15,
-            lambda x: pygame.draw.line(screen, "green", (200, 699), (213, 652)),
-            (200, 699),
-            (213, 652),
-        ),
-        SuccesLine(
-            16,
-            lambda x: pygame.draw.line(screen, "green", (419, 698), (438, 650)),
-            (419, 698),
-            (438, 650),
-        ),
-        SuccesLine(
-            17,
-            lambda x: pygame.draw.line(screen, "green", (641, 699), (631, 652)),
-            (641, 699),
-            (631, 652),
-        ),
-        SuccesLine(
-            18,
-            lambda x: pygame.draw.line(screen, "green", (871, 700), (882, 650)),
-            (871, 700),
-            (882, 650),
-        ),
-        SuccesLine(
-            19,
-            lambda x: pygame.draw.line(screen, "green", (968, 632), (1130, 659)),
-            (968, 632),
-            (1130, 659),
-        ),
-        SuccesLine(
-            20,
-            lambda x: pygame.draw.line(screen, "green", (999, 580), (1181, 580)),
-            (999, 580),
-            (1181, 580),
-        ),
-    ]
+    return np.flip(
+        [
+            SuccesLine(
+                19,
+                lambda x: pygame.draw.line(screen, "green", (55, 599), (108, 583)),
+                (55, 599),
+                (108, 583),
+            ),
+            SuccesLine(
+                18,
+                lambda x: pygame.draw.line(screen, "green", (200, 699), (213, 652)),
+                (200, 699),
+                (213, 652),
+            ),
+            SuccesLine(
+                17,
+                lambda x: pygame.draw.line(screen, "green", (419, 698), (438, 650)),
+                (419, 698),
+                (438, 650),
+            ),
+            SuccesLine(
+                16,
+                lambda x: pygame.draw.line(screen, "green", (641, 699), (631, 652)),
+                (641, 699),
+                (631, 652),
+            ),
+            SuccesLine(
+                15,
+                lambda x: pygame.draw.line(screen, "green", (871, 700), (882, 650)),
+                (871, 700),
+                (882, 650),
+            ),
+            SuccesLine(
+                14,
+                lambda x: pygame.draw.line(screen, "green", (968, 632), (1130, 659)),
+                (968, 632),
+                (1130, 659),
+            ),
+            SuccesLine(
+                13,
+                lambda x: pygame.draw.line(screen, "green", (999, 580), (1181, 580)),
+                (999, 580),
+                (1181, 580),
+            ),
+            SuccesLine(
+                11,
+                lambda x: pygame.draw.line(screen, "green", (1000, 516), (1189, 530)),
+                (1000, 516),
+                (1189, 530),
+            ),
+            SuccesLine(
+                11,
+                lambda x: pygame.draw.line(screen, "green", (1000, 454), (1159, 425)),
+                (1000, 454),
+                (1159, 425),
+            ),
+            SuccesLine(
+                10,
+                lambda x: pygame.draw.line(screen, "green", (999, 408), (1102, 348)),
+                (999, 408),
+                (1102, 348),
+            ),
+            SuccesLine(
+                9,
+                lambda x: pygame.draw.line(screen, "green", (951, 403), (949, 352)),
+                (951, 403),
+                (949, 352),
+            ),
+            SuccesLine(
+                8,
+                lambda x: pygame.draw.line(screen, "green", (838, 470), (830, 427)),
+                (838, 470),
+                (830, 427),
+            ),
+            SuccesLine(
+                7,
+                lambda x: pygame.draw.line(screen, "green", (708, 460), (701, 507)),
+                (708, 460),
+                (701, 507),
+            ),
+            SuccesLine(
+                6,
+                lambda x: pygame.draw.line(screen, "green", (561, 517), (568, 475)),
+                (561, 517),
+                (568, 475),
+            ),
+            SuccesLine(
+                5,
+                lambda x: pygame.draw.line(screen, "green", (512, 443), (560, 457)),
+                (512, 443),
+                (560, 457),
+            ),
+            SuccesLine(
+                4,
+                lambda x: pygame.draw.line(screen, "green", (573, 303), (635, 259)),
+                (573, 303),
+                (635, 259),
+            ),
+            SuccesLine(
+                3,
+                lambda x: pygame.draw.line(screen, "green", (469, 265), (474, 218)),
+                (469, 265),
+                (474, 218),
+            ),
+            SuccesLine(
+                2,
+                lambda x: pygame.draw.line(screen, "green", (262, 247), (276, 203)),
+                (262, 247),
+                (276, 203),
+            ),
+            SuccesLine(
+                1,
+                lambda x: pygame.draw.line(screen, "green", (161, 293), (117, 241)),
+                (161, 293),
+                (117, 241),
+            ),
+            SuccesLine(
+                0,
+                lambda x: pygame.draw.line(screen, "green", (42, 429), (93, 432)),
+                (42, 429),
+                (93, 432),
+            ),
+        ]
+    )
 
 
 gap = 100
