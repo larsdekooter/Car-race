@@ -37,7 +37,9 @@ class Game:
         self.text("Angle: " + str(self.car.angle), 1210, 35)
         self.text(
             "dX: "
-            + str(int(self.car.currentDistance(self.pointLines[self.car.currentLine]))),
+            + str(
+                int(self.car.currentDistance(self.pointLines[self.car.currentLine])[0])
+            ),
             1210,
             70,
         )
@@ -96,7 +98,7 @@ class Game:
 
     def handleRewards(self, hitbox):
         lastDistance = self.car.lastDistance
-        currentDistance = self.car.currentDistance(
+        currentDistance, _, _ = self.car.currentDistance(
             self.pointLines[self.car.currentLine], True
         )
         reward = 0

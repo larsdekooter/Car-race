@@ -68,7 +68,7 @@ class Network:
     def __init__(self, load=False):
         self.gamma = data.gamma
         self.memory = deque(maxlen=100_000)
-        self.model = LinearQNet(11, data.hiddenSize, data.hiddenSize, 4)
+        self.model = LinearQNet(13, data.hiddenSize, data.hiddenSize, 4)
         self.trainer = QTrainer(self.model, lr=data.lr, gamma=self.gamma)
         self.maxEpsilon = data.maxEpsilon
         self.minEpsilon = data.minEpsilon
@@ -89,7 +89,11 @@ class Network:
             distanceToWalls.append(distances)
 
         currentLine = game.pointLines[game.car.currentLine]
-        distance = util.getShortestDistanceToLine(game.car.x, game.car.y, currentLine)
+        (
+            distance,
+            xDistance,
+            yDistance,
+        ) = util.getShortestDistanceToLine(game.car.x, game.car.y, currentLine)
         game.car.lastDistance = distance
 
         state = [
@@ -102,6 +106,8 @@ class Network:
             np.min(distanceToWalls[6]) if len(distanceToWalls[6]) > 0 else 1000,
             np.min(distanceToWalls[7]) if len(distanceToWalls[7]) > 0 else 1000,
             distance,
+            xDistance,
+            yDistance,
             # game.car.x,
             # game.car.y,
             game.car.speed,

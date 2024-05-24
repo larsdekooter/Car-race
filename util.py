@@ -38,5 +38,6 @@ def getShortestDistanceToLine(x, y, line: SuccesLine):
         )
     else:
         projection = line_start + t * line_direction
-    distance = np.linalg.norm(point - projection)
-    return distance
+    distance_vector = point - projection
+    distance = np.linalg.norm(distance_vector)
+    return distance, distance_vector[0], distance_vector[1]
