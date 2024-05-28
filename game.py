@@ -105,6 +105,7 @@ class Game:
 
         if self.checkPointCollissions(hitbox):
             reward += data.lineReward
+            self.car.closestDistance = None
 
         elapsed_time = time.time() - self.starttime
         if elapsed_time > 20:
@@ -119,6 +120,10 @@ class Game:
             reward -= data.hitCost
 
         if self.car.isMovingInCircles():
+            reward -= data.circlePenalty
+        if self.car.isMovingBackwards(self.pointLines[self.car.currentLine]):
+            reward -= data.circlePenalty
+        if self.car.isRepeatingStates():
             reward -= data.circlePenalty
 
         self.car.rewardThisGame += reward

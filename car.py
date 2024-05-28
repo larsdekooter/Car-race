@@ -3,6 +3,7 @@ import math
 from raycastline import RaycastLine
 import data
 import util
+from collections import deque
 
 
 class Car:
@@ -11,6 +12,7 @@ class Car:
         self.reset()
 
     def reset(self):
+        self.stateHistory = deque(maxlen=100)
         self.positions = []
         self.maxSpeed = data.maxSpeed
         self.x = data.x
@@ -27,10 +29,28 @@ class Car:
         self.currentLine = 0
         self.lastLine = -1
         self.lastDistance = 0
+        self.closestDistance = None
         self.rewardThisGame = 0
+
+    def isRepeatingStates(self):
+        currentState = ((self.x, self.y), self.speed, self.angle)
+        if currentState in self.stateHistory:
+            return True
+        self.stateHistory.append(currentState)
+        return False
+
+    def isMovingBackwards(self, line):
+        if (
+            self.closestDistance
+            and self.currentDistance(line)[0] > self.closestDistance
+        ):
+            return True
+        return False
 
     def currentDistance(self, currentLine, update=False):
         distance = util.getShortestDistanceToLine(self.x, self.y, currentLine)
+        if self.closestDistance and distance[0] < self.closestDistance:
+            self.closestDistance = distance
         if update:
             self.lastDistance = distance
         return distance
