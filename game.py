@@ -98,7 +98,7 @@ class Game:
 
     def handleRewards(self, hitbox):
         lastDistance = self.car.lastDistance
-        currentDistance = self.car.currentDistance(
+        currentDistance, _, _ = self.car.currentDistance(
             self.pointLines[self.car.currentLine], True
         )
         reward = 0
@@ -127,7 +127,7 @@ class Game:
             reward -= 200
 
         # Penalty for moving backwards
-        if self.car.isMovingBackwards():
+        if self.car.isMovingBackwards(self.pointLines[self.car.currentLine]):
             reward -= 500
 
         # Penalty for oscillatory movement
