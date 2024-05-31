@@ -59,6 +59,11 @@ class QTrainer:
         expectedQValues = rewards + (self.gamma * nextQValues * (1 - dones))
 
         loss = self.criterion(currentQValues, expectedQValues)
+
+        logProbs = torch.log_softmax(self.model(states), dim=1)
+        entropy = -(logProbs * torch.exp(logProbs)).sum(dim=1).mean()
+        loss -= data.entropy_regularization_weight * entropy
+
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
