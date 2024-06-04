@@ -13,7 +13,7 @@ def train():
     while True:
         final_move = [0, 0, 0, 0, 0]
         state_old = network.get_state(game)
-        move = network.getMove(state_old)
+        move = get_moves()  # network.getMove(state_old)
         final_move[move] = 1
         reward, done, score = game.step(final_move)
         stateNew = network.get_state(game)
