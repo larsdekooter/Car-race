@@ -42,6 +42,7 @@ class QTrainer:
         self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()
         self.targetModel = deepcopy(model)
+        self.losses = deque(maxlen=1000)
 
     def trainTarget(self):
         self.targetModel.load_state_dict(self.model.state_dict())
@@ -84,6 +85,7 @@ class QTrainer:
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
+        self.losses.append(loss.detach().numpy())
 
     def compareTargetWithMainModel(self):
         for p1, p2 in zip(self.model.parameters(), self.targetModel.parameters()):

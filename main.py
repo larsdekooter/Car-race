@@ -2,6 +2,7 @@ from game import Game
 import pygame
 from network import Network
 import data
+import matplotlib.pyplot as plt
 
 
 def train():
@@ -57,6 +58,10 @@ def train():
             )
             if game.ngames % data.targetUpdate == 0:
                 network.trainer.trainTarget()
+        # plt.clf()
+        # plt.plot(range(0, len(network.trainer.losses)), network.trainer.losses)
+        # plt.show(block=False)
+        # plt.pause(0.001)
 
 
 def get_moves():
