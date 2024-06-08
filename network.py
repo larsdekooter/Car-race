@@ -68,9 +68,16 @@ class QTrainer:
         loss.backward()
         self.optimizer.step()
 
+    def compareTargetWithMainModel(self):
+        for p1, p2 in zip(self.model.parameters(), self.targetModel.parameters()):
+            if p1.data.ne(p2.data).sum() > 0:
+                return False
+        return True
+
 
 class Network:
     def __init__(self, load=False):
+        self.ngames = 0
         self.gamma = data.gamma
         self.memory = deque(maxlen=100_000)
         self.model = LinearQNet(13, data.hiddenSize, data.hiddenSize, 4)
@@ -123,7 +130,7 @@ class Network:
 
     def getMove(self, state):
         epsilon = self.minEpsilon + (self.maxEpsilon - self.minEpsilon) * np.exp(
-            -self.decayRate * self.decayStep
+            -self.decayRate * self.ngames
         )
 
         if np.random.rand() < epsilon:
