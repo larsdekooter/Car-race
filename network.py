@@ -46,7 +46,7 @@ class QTrainer:
     def trainTarget(self):
         self.targetModel.load_state_dict(self.model.state_dict())
 
-    def trainStep(self, states, actions, rewards, nextStates, dones):
+    def trainSteps(self, states, actions, rewards, nextStates, dones):
         states = torch.tensor(np.array(states), dtype=torch.float32)
         actions = torch.tensor(actions, dtype=torch.int64).unsqueeze(1)
         rewards = torch.tensor(rewards, dtype=torch.float32).unsqueeze(1)
@@ -63,6 +63,23 @@ class QTrainer:
         logProbs = torch.log_softmax(self.model(states), dim=1)
         entropy = -(logProbs * torch.exp(logProbs)).sum(dim=1).mean()
         loss -= data.entropy_regularization_weight * entropy
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
+    def trainStep(self, state, action, reward, nextState, done):
+        state = torch.tensor(np.array(state), dtype=torch.float32)
+        action = torch.tensor(action, dtype=torch.int64)
+        reward = torch.tensor(reward, dtype=torch.float32)
+        nextState = torch.tensor(np.array(nextState), dtype=torch.float32)
+        done = torch.tensor(done, dtype=torch.float32)
+
+        currentQValue = self.model(state)  # .gather(1, action)
+        nextQValue = self.targetModel(nextState).detach()
+        expectedQValue = reward + (self.gamma * nextQValue * (1 - done))
+
+        loss = self.criterion(currentQValue, expectedQValue)
 
         self.optimizer.zero_grad()
         loss.backward()
@@ -161,7 +178,8 @@ class Network:
         move = torch.argmax(prediction).item()
         return move
 
-    def trainShort(self, state, action, reward, next_state, done):
+    def trainShort(self):
+        state, action, reward, next_state, done = self.memory[-1]
         self.trainer.trainStep(state, action, reward, next_state, done)
 
     def remember(self, state, action, reward, next_state, done):
@@ -174,4 +192,4 @@ class Network:
         batch = random.sample(self.memory, data.batchSize)
 
         states, actions, rewards, next_states, dones = zip(*batch)
-        self.trainer.trainStep(states, actions, rewards, next_states, dones)
+        self.trainer.trainSteps(states, actions, rewards, next_states, dones)

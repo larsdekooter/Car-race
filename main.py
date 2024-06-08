@@ -18,6 +18,7 @@ def train():
         reward, done, score = game.step(final_move)
         stateNew = network.get_state(game)
         network.remember(state_old, move, reward, stateNew, done)
+        network.trainShort()
         if done:
             game.reset()
             game.ngames += 1
