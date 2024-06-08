@@ -21,6 +21,7 @@ def train():
         if done:
             game.reset()
             game.ngames += 1
+            network.ngames += 1
             network.trainLong()
             net = network.net
             rand = network.rand
