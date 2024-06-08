@@ -3,6 +3,7 @@ import math
 from raycastline import RaycastLine
 import data
 import util
+from collections import deque
 
 
 class Car:
@@ -11,6 +12,8 @@ class Car:
         self.reset()
 
     def reset(self):
+        self.stateHistory = deque(maxlen=100)
+        self.positions = []
         self.maxSpeed = data.maxSpeed
         self.x = data.x
         self.y = data.y
@@ -26,14 +29,31 @@ class Car:
         self.currentLine = 0
         self.lastLine = -1
         self.lastDistance = 0
+        self.closestDistance = None
         self.rewardThisGame = 0
-    
+
+    def isRepeatingStates(self):
+        currentState = ((self.x, self.y), self.speed, self.angle)
+        if currentState in self.stateHistory:
+            return True
+        self.stateHistory.append(currentState)
+        return False
+
+    def isMovingBackwards(self, line):
+        if (
+            self.closestDistance
+            and self.currentDistance(line)[0] > self.closestDistance
+        ):
+            return True
+        return False
+
     def currentDistance(self, currentLine, update=False):
         distance = util.getShortestDistanceToLine(self.x, self.y, currentLine)
+        if self.closestDistance and distance[0] < self.closestDistance:
+            self.closestDistance = distance
         if update:
             self.lastDistance = distance
         return distance
-
 
     def updateHitbox(self):
         self.hitbox = (self.x, self.y, 20, 20)
@@ -45,7 +65,26 @@ class Car:
         self.x += xChange
         self.y += yChange
         self.updateHitbox()
+        self.positions.append((self.x, self.y))
+        if len(self.positions) > 100:
+            self.positions.pop(0)
         return pygame.transform.rotate(self.img, self.angle)
+
+    def calculateDisplacement(self):
+        if len(self.positions) < 2:
+            return 0
+        startpos = self.positions[0]
+        endpos = self.positions[-1]
+        displacement = (
+            (endpos[0] - startpos[0]) ** 2 + (endpos[1] - startpos[1]) ** 2
+        ) ** 0.5
+        return displacement
+
+    def isMovingInCircles(self):
+        displacement = self.calculateDisplacement()
+        if displacement < data.displacementThreshold:
+            return True
+        return False
 
     def handleStraight(self, moves):
         if moves[0] == 1:  # backwards

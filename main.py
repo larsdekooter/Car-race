@@ -1,6 +1,8 @@
 from game import Game
 import pygame
 from network import Network
+import data
+import matplotlib.pyplot as plt
 
 
 def train():
@@ -8,16 +10,20 @@ def train():
     network = Network()
     percentageIndex = 0
     percentages = [90, 95, 97, 99]
+
     while True:
+        final_move = [0, 0, 0, 0, 0]
         state_old = network.get_state(game)
-        final_move = network.getMove(state_old)
+        move = network.getMove(state_old)
+        final_move[move] = 1
         reward, done, score = game.step(final_move)
         stateNew = network.get_state(game)
-        network.trainShort(state_old, final_move, reward, stateNew, done)
-        network.remember(state_old, final_move, reward, stateNew, done)
+        network.remember(state_old, move, reward, stateNew, done)
+        network.trainShort()
         if done:
             game.reset()
             game.ngames += 1
+            network.ngames += 1
             network.trainLong()
             net = network.net
             rand = network.rand
@@ -27,7 +33,10 @@ def train():
             if score > game.record:
                 game.record = score
 
-            game.percentage = round((net / (net + rand)) * 100.0, 2)
+            try:
+                game.percentage = round((net / (net + rand)) * 100.0, 2)
+            except:
+                pass
             if (
                 game.percentage > percentages[percentageIndex]
                 and percentageIndex < len(percentages) - 1
@@ -44,21 +53,41 @@ def train():
                 game.record,
                 "%",
                 game.percentage,
+                "steps",
+                network.decayStep,
             )
+            if game.ngames % data.targetUpdate == 0:
+                network.trainer.trainTarget()
+        # plt.clf()
+        # plt.plot(range(0, len(network.trainer.losses)), network.trainer.losses)
+        # plt.show(block=False)
+        # plt.pause(0.001)
 
 
 def get_moves():
     keys = pygame.key.get_pressed()
     final_move = [0, 0, 0, 0]
     if keys[pygame.K_LEFT]:
-        final_move[2] = 1
+        return 2
     elif keys[pygame.K_RIGHT]:
-        final_move[3] = 1
+        return 3
     elif keys[pygame.K_UP]:
-        final_move[1] = 1
+        return 1
     elif keys[pygame.K_DOWN]:
-        final_move[0] = 1
-    return final_move
+        return 0
+    else:
+        return 4
+
+
+def reverseTranslateMoves(move):
+    if move == "B":
+        return 0
+    if move == "F":
+        return 1
+    if move == "L":
+        return 2
+    if move == "R":
+        return 3
 
 
 def translate_moves(move):

@@ -24,16 +24,32 @@ class Game:
 
     def infoLines(self):
         pygame.draw.line(self.screen, "white", (1200, 0), (1200, 720), 1)
-        self.text("Speed: " + str(round(self.car.speed, 4) if self.car.speed >= 0 else -round(self.car.speed, 4)), 1210, 5)
+        self.text(
+            "Speed: "
+            + str(
+                round(self.car.speed, 4)
+                if self.car.speed >= 0
+                else -round(self.car.speed, 4)
+            ),
+            1210,
+            5,
+        )
         self.text("Angle: " + str(self.car.angle), 1210, 35)
-        self.text("dX: " + str(int(self.car.currentDistance(self.pointLines[self.car.currentLine]))), 1210, 70)
+        self.text(
+            "dX: "
+            + str(
+                int(self.car.currentDistance(self.pointLines[self.car.currentLine])[0])
+            ),
+            1210,
+            70,
+        )
         self.text("rew: " + str(int(self.car.rewardThisGame)), 1210, 105)
         self.text("x " + str(int(self.car.x)), 1210, 140)
-        self.text("y "+ str(int(self.car.y)), 1210, 175)
-        self.text("Record "+ str(self.record), 1210, 210)
-        self.text("nG  " + str(self.ngames), 1210, 245)
-        self.text(str(self.percentage) + '%', 1210, 280)
-        self.text("h" + str(round((time.time() - self.s)/3600, 2)), 1210, 315)
+        self.text("y " + str(int(self.car.y)), 1210, 175)
+        self.text("R " + str(self.record), 1210, 210)
+        self.text("nG " + str(self.ngames), 1210, 245)
+        self.text(str(self.percentage) + "%", 1210, 280)
+        self.text("h" + str(round((time.time() - self.s) / 3600, 2)), 1210, 315)
 
     def text(self, text: str, x: int, y: int):
         fo = self.font.render(text, True, "white", "black")
@@ -82,16 +98,42 @@ class Game:
 
     def handleRewards(self, hitbox):
         lastDistance = self.car.lastDistance
-        distance = self.car.currentDistance(self.pointLines[self.car.currentLine], True)
+        currentDistance, _, _ = self.car.currentDistance(
+            self.pointLines[self.car.currentLine], True
+        )
         reward = 0
+
+        # Reward for passing checkpoints
         if self.checkPointCollissions(hitbox):
-            reward += data.lineReward
-        if time.time() - self.starttime > 20:
-            reward += data.timeReward
-        if (distance < lastDistance):
-            reward += data.distanceReward * (-distance+100)
+            reward += 1000
+
+        # Time penalty to encourage faster completion
+        elapsed_time = time.time() - self.starttime
+        if elapsed_time > 20:
+            reward -= 5
+
+        # Reward for reducing the distance to the next checkpoint
+        if currentDistance < lastDistance:
+            reward += 100 * (lastDistance - currentDistance)
+        else:
+            reward -= 10 * (currentDistance - lastDistance)
+
+        # Penalty for collisions
         if self.checkCircuitCollisions(hitbox):
-            reward = data.hitCost
+            reward -= 1000
+
+        # Penalty for moving in circles
+        if self.car.isMovingInCircles():
+            reward -= 200
+
+        # Penalty for moving backwards
+        if self.car.isMovingBackwards(self.pointLines[self.car.currentLine]):
+            reward -= 500
+
+        # Penalty for oscillatory movement
+        if self.car.isRepeatingStates():
+            reward -= 50
+
         self.car.rewardThisGame += reward
         return reward
 
@@ -127,4 +169,3 @@ class Game:
         self.car.reset()
         self.starttime = time.time()
         self.closestDistance = None
-    
