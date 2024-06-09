@@ -1,9 +1,9 @@
 lr = 10**-6
 gamma = 0.9
-hiddenSize = 256
+hiddenSize = 512
 maxEpsilon = 1
 minEpsilon = 0.01
-decayRate = 1e-5
+decayRate = 1e-3
 maxSpeed = 5
 x = 75
 y = 570
