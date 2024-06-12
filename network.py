@@ -109,6 +109,7 @@ class Network:
         self.decayStep = 0
         if load:
             self.model.load_state_dict(torch.load("./model/model.pth"))
+        self.model.train()
 
     def get_state(self, game: Game):
         distanceToWalls = []
