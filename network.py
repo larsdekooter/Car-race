@@ -99,7 +99,7 @@ class Network:
         self.ngames = 0
         self.gamma = data.gamma
         self.memory = deque(maxlen=100_000)
-        self.model = LinearQNet(5, data.hiddenSize, data.hiddenSize, 4)
+        self.model = LinearQNet(16, data.hiddenSize, data.hiddenSize, 4)
         self.trainer = QTrainer(self.model, lr=data.lr, gamma=self.gamma)
         self.maxEpsilon = data.maxEpsilon
         self.minEpsilon = data.minEpsilon
@@ -129,21 +129,22 @@ class Network:
         game.car.lastDistance = distance
 
         state = [
-            # np.min(distanceToWalls[0]) if len(distanceToWalls[0]) > 0 else 1000,
-            # np.min(distanceToWalls[1]) if len(distanceToWalls[1]) > 0 else 1000,
-            # np.min(distanceToWalls[2]) if len(distanceToWalls[2]) > 0 else 1000,
-            # np.min(distanceToWalls[3]) if len(distanceToWalls[3]) > 0 else 1000,
-            # np.min(distanceToWalls[4]) if len(distanceToWalls[4]) > 0 else 1000,
-            # np.min(distanceToWalls[5]) if len(distanceToWalls[5]) > 0 else 1000,
-            # np.min(distanceToWalls[6]) if len(distanceToWalls[6]) > 0 else 1000,
-            # np.min(distanceToWalls[7]) if len(distanceToWalls[7]) > 0 else 1000,
+            np.min(distanceToWalls[0]) if len(distanceToWalls[0]) > 0 else 1000,
+            np.min(distanceToWalls[1]) if len(distanceToWalls[1]) > 0 else 1000,
+            np.min(distanceToWalls[2]) if len(distanceToWalls[2]) > 0 else 1000,
+            np.min(distanceToWalls[3]) if len(distanceToWalls[3]) > 0 else 1000,
+            np.min(distanceToWalls[4]) if len(distanceToWalls[4]) > 0 else 1000,
+            np.min(distanceToWalls[5]) if len(distanceToWalls[5]) > 0 else 1000,
+            np.min(distanceToWalls[6]) if len(distanceToWalls[6]) > 0 else 1000,
+            np.min(distanceToWalls[7]) if len(distanceToWalls[7]) > 0 else 1000,
             distance,
             xDistance,
             yDistance,
-            # game.car.x,
-            # game.car.y,
+            game.car.x,
+            game.car.y,
             game.car.speed,
             game.car.angle,
+            game.car.currentLine
         ]
 
         return np.array(state, dtype=float)
