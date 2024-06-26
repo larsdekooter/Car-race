@@ -97,44 +97,13 @@ class Game:
         return reward, done, self.car.points
 
     def handleRewards(self, hitbox):
-        lastDistance = self.car.lastDistance
-        currentDistance, _, _ = self.car.currentDistance(
-            self.pointLines[self.car.currentLine], True
+        reward = (
+            data.lineReward
+            if self.checkPointCollissions(hitbox)
+            else data.timeStepPenalty
         )
-        reward = 0
-
-        # Reward for passing checkpoints
-        if self.checkPointCollissions(hitbox):
-            reward += 1000
-
-        # Time penalty to encourage faster completion
-        elapsed_time = time.time() - self.starttime
-        if elapsed_time > 20:
-            reward -= 5
-
-        # Reward for reducing the distance to the next checkpoint
-        if currentDistance < lastDistance:
-            reward += 100 * (lastDistance - currentDistance)
-        else:
-            reward -= 10 * (currentDistance - lastDistance)
-
-        # Penalty for collisions
         if self.checkCircuitCollisions(hitbox):
-            reward -= 1000
-
-        # Penalty for moving in circles
-        if self.car.isMovingInCircles():
-            reward -= 200
-
-        # Penalty for moving backwards
-        if self.car.isMovingBackwards(self.pointLines[self.car.currentLine]):
-            reward -= 500
-
-        # Penalty for oscillatory movement
-        if self.car.isRepeatingStates():
-            reward -= 50
-
-        self.car.rewardThisGame += reward
+            reward = data.hitCost
         return reward
 
     def handleEvents(self):
