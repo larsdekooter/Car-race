@@ -31,6 +31,16 @@ class Car:
         self.lastDistance = 0
         self.closestDistance = None
         self.rewardThisGame = 0
+        self.lastPosition = (self.x, self.y)
+        self.distanceMoved = 0
+
+    def getDistanceDriven(self):
+        distance = math.sqrt(
+            (self.x - self.lastPosition[0]) ** 2 + (self.y - self.lastPosition[1]) ** 2
+        )
+        self.lastPosition = (self.x, self.y)
+        self.distanceMoved += distance
+        return self.distanceMoved
 
     def isRepeatingStates(self):
         currentState = ((self.x, self.y), self.speed, self.angle)

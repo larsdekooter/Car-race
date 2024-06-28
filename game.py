@@ -97,13 +97,16 @@ class Game:
         return reward, done, self.car.points
 
     def handleRewards(self, hitbox):
-        reward = (
-            data.lineReward
-            if self.checkPointCollissions(hitbox)
-            else data.timeStepPenalty
-        )
+        reward = data.timeStepPenalty
+        if self.checkPointCollissions(hitbox):
+            distanceDriven = self.car.getDistanceDriven()
+            if distanceDriven > 1:
+                reward = data.lineReward / (distanceDriven * data.distancePenalty)
+            else:
+                reward = 100
         if self.checkCircuitCollisions(hitbox):
             reward = data.hitCost
+
         return reward
 
     def handleEvents(self):

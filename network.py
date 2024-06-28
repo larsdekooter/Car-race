@@ -151,7 +151,7 @@ class Network:
 
     def getMove(self, state):
         epsilon = self.minEpsilon + (self.maxEpsilon - self.minEpsilon) * np.exp(
-            -self.decayRate * self.ngames
+            -self.decayRate * self.decayStep
         )
 
         if np.random.rand() < epsilon:
