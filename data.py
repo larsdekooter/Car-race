@@ -23,3 +23,5 @@ circlePenalty = 200
 displacementThreshold = 0.2
 targetUpdate = 10
 entropy_regularization_weight = 0.1
+inputSize = 13
+outputSize = 4

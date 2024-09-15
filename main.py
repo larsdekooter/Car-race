@@ -5,63 +5,26 @@ import data
 import matplotlib.pyplot as plt
 
 
-def train():
-    game = Game()
-    network = Network()
-    percentageIndex = 0
-    percentages = [90, 95, 97, 99]
-
-    while True:
-        final_move = [0, 0, 0, 0, 0]
-        state_old = network.get_state(game)
-        move = network.getMove(state_old)
-        final_move[move] = 1
-        reward, done, score = game.step(final_move)
-        stateNew = network.get_state(game)
-        network.remember(state_old, move, reward, stateNew, done)
-        network.trainShort()
-        if done:
-            game.reset()
-            game.ngames += 1
-            network.ngames += 1
-            network.trainLong()
-            net = network.net
-            rand = network.rand
-            network.net = 0
-            network.rand = 0
-
-            if score > game.record:
-                game.record = score
-
-            try:
-                game.percentage = round((net / (net + rand)) * 100.0, 2)
-            except:
-                pass
-            if (
-                game.percentage > percentages[percentageIndex]
-                and percentageIndex < len(percentages) - 1
-            ):
-                percentageIndex += 1
-                network.model.save()
-
-            print(
-                "Game",
-                game.ngames,
-                "Score",
-                score,
-                "Record",
-                game.record,
-                "%",
-                game.percentage,
-                "steps",
-                network.decayStep,
-            )
-            if game.ngames % data.targetUpdate == 0:
-                network.trainer.trainTarget()
-        # plt.clf()
-        # plt.plot(range(0, len(network.trainer.losses)), network.trainer.losses)
-        # plt.show(block=False)
-        # plt.pause(0.001)
+game = Game()
+network = Network()
+state_old = network.getState(game)
+while True:
+    final_move = [0, 0, 0, 0, 0]
+    move = network.getMove(state_old)
+    final_move[move] = 1
+    reward, done, score = game.step(final_move)
+    stateNew = network.getState(game)
+    network.train(state_old, stateNew, move, reward, done)
+    state_old = stateNew
+    if done:
+        game.reset()
+        game.ngames += 1
+        network.ngames += 1
+        network.aiPerGame.append(0)
+        network.randomPerGame.append(0)
+        print(
+            f"Games: {network.ngames}, Score: {score}, Percentage: {round(network.aiPerGame[network.ngames] / (network.aiPerGame[network.ngames] + network.randomPerGame[network.ngames]) * 100.0, 2)}, Epsilon: {round(network.epsilon, 3)}"
+        )
 
 
 def get_moves():
@@ -99,6 +62,3 @@ def translate_moves(move):
         return "Left"
     if move[3] == 1:
         return "Right"
-
-
-train()

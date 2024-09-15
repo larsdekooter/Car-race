@@ -12,6 +12,7 @@ class Car:
         self.reset()
 
     def reset(self):
+        self.raycastlines: list[RaycastLine] = []
         self.stateHistory = deque(maxlen=100)
         self.positions = []
         self.maxSpeed = data.maxSpeed
