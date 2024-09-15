@@ -82,15 +82,15 @@ class Network:
             return self.model(torch.tensor(state, dtype=torch.float32)).argmax().item()
 
     def train(self, state, newState, action, reward, done):
-        self.memory.append((state, state, newState, action, reward, done))
+        self.memory.append((state, newState, action, reward, done))
         if len(self.memory) < data.batchSize:
             return
 
         batch = random.sample(self.memory, data.batchSize)
         states, newStates, actions, rewards, dones = zip(*batch)
 
-        states = torch.tensor(states, dtype=torch.float32)
-        newStates = torch.tensor(newStates, dtype=torch.float32)
+        states = torch.tensor(np.array(states), dtype=torch.float32)
+        newStates = torch.tensor(np.array(newStates), dtype=torch.float32)
         actions = torch.tensor(actions, dtype=torch.long).unsqueeze(1)
         rewards = torch.tensor(rewards, dtype=torch.float32)
         dones = torch.tensor(dones, dtype=torch.bool)
@@ -104,5 +104,5 @@ class Network:
         loss.backward()
         self.optimizer.step()
 
-        if self.steps % 100 == 0:
+        if self.step % 100 == 0:
             self.targetModel.load_state_dict(self.model.state_dict())

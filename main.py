@@ -17,14 +17,14 @@ while True:
     network.train(state_old, stateNew, move, reward, done)
     state_old = stateNew
     if done:
+        print(
+            f"Games: {network.ngames}, Score: {score}, Percentage: {round(network.aiPerGame[network.ngames] / (network.aiPerGame[network.ngames] + network.randomPerGame[network.ngames]) * 100.0, 2)}, Epsilon: {round(network.epsilon, 3)}, Steps: {network.step}"
+        )
         game.reset()
         game.ngames += 1
         network.ngames += 1
         network.aiPerGame.append(0)
         network.randomPerGame.append(0)
-        print(
-            f"Games: {network.ngames}, Score: {score}, Percentage: {round(network.aiPerGame[network.ngames] / (network.aiPerGame[network.ngames] + network.randomPerGame[network.ngames]) * 100.0, 2)}, Epsilon: {round(network.epsilon, 3)}"
-        )
 
 
 def get_moves():
