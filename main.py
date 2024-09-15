@@ -9,7 +9,7 @@ game = Game()
 network = Network()
 state_old = network.getState(game)
 
-for i in tqdm(range(10**10)):
+for i in tqdm(range(4366728)):
     final_move = [0, 0, 0, 0, 0]
     move = network.getMove(state_old)
     final_move[move] = 1
