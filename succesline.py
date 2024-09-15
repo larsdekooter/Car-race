@@ -1,6 +1,9 @@
+import pygame
+
+
 class SuccesLine:
-    def __init__(self, i, line, start, end):
-        self.line = line
+    def __init__(self, i, color, start, end):
+        self.color = color
         self.i = i
         self.start = start
         self.end = end
@@ -11,4 +14,4 @@ class SuccesLine:
 
     def draw(self, screen):
         self.isDrawn = True
-        return self.line(screen)
+        return pygame.draw.line(screen, self.color, self.start, self.end)

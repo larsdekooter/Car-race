@@ -3,16 +3,41 @@ import pygame
 from network import Network
 import data
 import matplotlib.pyplot as plt
-
+from tqdm import tqdm
 
 game = Game()
 network = Network()
 state_old = network.getState(game)
-while True:
+
+for i in tqdm(range(10**10)):
     final_move = [0, 0, 0, 0, 0]
     move = network.getMove(state_old)
     final_move[move] = 1
     reward, done, score = game.step(final_move)
+    stateNew = network.getState(game)
+    network.train(state_old, stateNew, move, reward, done)
+    state_old = stateNew
+    if done:
+        # print(
+        #     f"Games: {network.ngames}, Score: {score}, Percentage: {round(network.aiPerGame[network.ngames] / (network.aiPerGame[network.ngames] + network.randomPerGame[network.ngames]) * 100.0, 2)}, Epsilon: {round(network.epsilon, 3)}, Steps: {network.step}"
+        # )
+        game.reset()
+        game.ngames += 1
+        network.ngames += 1
+        network.aiPerGame.append(0)
+        network.randomPerGame.append(0)
+        if network.epsilon <= data.minEpsilon:
+            break
+game.reset()
+game.ngames += 1
+network.ngames += 1
+network.aiPerGame.append(0)
+network.randomPerGame.append(0)
+while True:
+    final_move = [0, 0, 0, 0, 0]
+    move = network.getMove(state_old)
+    final_move[move] = 1
+    reward, done, score = game.step(final_move, render=True)
     stateNew = network.getState(game)
     network.train(state_old, stateNew, move, reward, done)
     state_old = stateNew

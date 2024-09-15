@@ -12,7 +12,6 @@ class Car:
         self.reset()
 
     def reset(self):
-        self.raycastlines: list[RaycastLine] = []
         self.stateHistory = deque(maxlen=100)
         self.positions = []
         self.maxSpeed = data.maxSpeed
@@ -20,12 +19,13 @@ class Car:
         self.y = data.y
         self.speed = 0
         self.angle = 0
+        self.initRaycasts()
         self.accelaration = data.accelaration
         self.decelaration = data.decelaration
         self.turnSpeed = data.turnSpeed
         self.img = pygame.transform.scale(pygame.image.load("car.png"), (25, 25))
         self.rect = self.img.get_rect()
-        self.hitbox = self.updateHitbox()
+        self.updateHitbox()
         self.points = 0
         self.currentLine = 0
         self.lastLine = -1
@@ -68,7 +68,6 @@ class Car:
 
     def updateHitbox(self):
         self.hitbox = (self.x, self.y, 20, 20)
-        pass
 
     def move(self, moves):
         self.handleStraight(moves)
@@ -79,7 +78,6 @@ class Car:
         self.positions.append((self.x, self.y))
         if len(self.positions) > 100:
             self.positions.pop(0)
-        return pygame.transform.rotate(self.img, self.angle)
 
     def calculateDisplacement(self):
         if len(self.positions) < 2:
@@ -133,19 +131,17 @@ class Car:
         angleRadians = math.radians(angle)
         return (math.sin(angleRadians), math.cos(angleRadians))
 
-    def drawRaycasts(self, screen, width=0):
+    def initRaycasts(self, width=0):
         self.raycastlines = [
             RaycastLine(
                 self.x + 10,
                 self.y + 10,
-                screen,
                 self.getLookingDirection(self.angle),
                 width,
             ),
             RaycastLine(
                 self.x + 10,
                 self.y + 10,
-                screen,
                 (
                     -self.getLookingDirection(self.angle)[0],
                     -self.getLookingDirection(self.angle)[1],
@@ -155,35 +151,30 @@ class Car:
             RaycastLine(
                 self.x + 10,
                 self.y + 10,
-                screen,
                 self.getLookingDirection(self.angle + 90),
                 width,
             ),
             RaycastLine(
                 self.x + 10,
                 self.y + 10,
-                screen,
                 self.getLookingDirection(self.angle - 90),
                 width,
             ),
             RaycastLine(
                 self.x + 10,
                 self.y + 10,
-                screen,
                 self.getLookingDirection(self.angle - 45),
                 width,
             ),
             RaycastLine(
                 self.x + 10,
                 self.y + 10,
-                screen,
                 self.getLookingDirection(self.angle + 45),
                 width,
             ),
             RaycastLine(
                 self.x + 10,
                 self.y + 10,
-                screen,
                 (
                     -self.getLookingDirection(self.angle - 45)[0],
                     -self.getLookingDirection(self.angle - 45)[1],
@@ -193,7 +184,6 @@ class Car:
             RaycastLine(
                 self.x + 10,
                 self.y + 10,
-                screen,
                 (
                     -self.getLookingDirection(self.angle + 45)[0],
                     -self.getLookingDirection(self.angle + 45)[1],

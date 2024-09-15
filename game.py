@@ -9,18 +9,14 @@ class Game:
     def __init__(self):
         self.s = time.time()
         self.car = Car()
-        pygame.init()
-        self.screen = pygame.display.set_mode((1380, 720))
-        self.clock = pygame.time.Clock()
-        self.font = pygame.font.Font("arial.ttf", 32)
-        self.circuitLines = circuit.circuit(self.screen)
-        self.pointLines = circuit.point_lines(self.screen)
         self.starttime = time.time()
-        self.car.drawRaycasts(self.screen)
         self.closestDistance = None
         self.record = 0
         self.ngames = 0
         self.percentage = 0
+        self.pointLines = circuit.point_lines()
+        self.circuitLines = circuit.circuit()
+        self.screen = None
 
     def infoLines(self):
         pygame.draw.line(self.screen, "white", (1200, 0), (1200, 720), 1)
@@ -58,42 +54,48 @@ class Game:
         foT.centery += y
         self.screen.blit(fo, foT)
 
-    def step(self, moves):
-        reward = 0
+    def render(self):
+        if self.screen is None:
+            pygame.init()
+            self.screen = pygame.display.set_mode((1380, 720))
+            self.clock = pygame.time.Clock()
+            self.font = pygame.font.Font("arial.ttf", 32)
         self.handleEvents()
-        rotated_car_img = self.car.move(moves)
-
         self.screen.fill("black")
-
-        circuit.circuit(self.screen)
-        self.pointLines = circuit.point_lines(self.screen)
+        for line in self.circuitLines:
+            line.draw(self.screen)
         self.pointLines[self.car.currentLine].draw(self.screen)
-
-        hitbox = pygame.draw.rect(self.screen, "orange", self.car.hitbox, 1)
-
-        done = self.checkCircuitCollisions(hitbox)
-        reward = self.handleRewards(hitbox)
-        self.car.drawRaycasts(self.screen)
-
-        if time.time() - self.starttime > data.time:
-            done = True
-
-        self.screen.blit(rotated_car_img, (self.car.x, self.car.y))
+        rotatedCarImg = pygame.transform.rotate(self.car.img, self.car.angle)
+        for raycast in self.car.raycastlines:
+            raycast.draw(self.screen)
+        pygame.draw.rect(self.screen, "orange", self.car.hitbox, 1)
+        self.screen.blit(rotatedCarImg, (self.car.x, self.car.y))
+        self.infoLines()
         text = self.font.render(str(self.car.points), True, "white", "black")
         textRect = text.get_rect()
         textRect.centerx += 5
         textRect.centery += 5
         times = time.time() - self.starttime
         text2 = self.font.render(str(times.__round__(0)), True, "white", "black")
-        textRect2 = text.get_rect()
+        textRect2 = text2.get_rect()
         textRect2.centerx += 640
         textRect2.centery += 360
         self.screen.blit(text, textRect)
         self.screen.blit(text2, textRect2)
-        self.infoLines()
-
         pygame.display.flip()
         self.clock.tick(60)
+
+    def step(self, moves, render=False):
+        self.car.move(moves)
+        reward = 0
+        hitbox = pygame.Rect(self.car.x, self.car.y, 20, 20)
+        done = self.checkCircuitCollisions(hitbox)
+        reward = self.handleRewards(hitbox)
+
+        if time.time() - self.starttime > data.time:
+            done = True
+        if render:
+            self.render()
         return reward, done, self.car.points
 
     def handleRewards(self, hitbox):
@@ -110,6 +112,7 @@ class Game:
         return reward
 
     def handleEvents(self):
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()

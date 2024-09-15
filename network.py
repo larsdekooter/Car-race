@@ -51,7 +51,6 @@ class Network:
             game.car.x, game.car.y, currentLine
         )
         game.car.lastDistance = distance
-
         state = [
             np.min(distanceToWalls[0] if len(distanceToWalls[0]) > 0 else 1000),
             np.min(distanceToWalls[1] if len(distanceToWalls[1]) > 0 else 1000),
