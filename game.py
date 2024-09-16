@@ -46,6 +46,8 @@ class Game:
         self.text("nG " + str(self.ngames), 1210, 245)
         self.text(str(self.percentage) + "%", 1210, 280)
         self.text("h" + str(round((time.time() - self.s) / 3600, 2)), 1210, 315)
+        self.text(str(self.car.points), 5, 5)
+        self.text(str(round(time.time() - self.starttime, 0)), 640, 360)
 
     def text(self, text: str, x: int, y: int):
         fo = self.font.render(text, True, "white", "black")
@@ -55,33 +57,30 @@ class Game:
         self.screen.blit(fo, foT)
 
     def render(self):
+        # Initialize pygame if not already initialized
         if self.screen is None:
             pygame.init()
             self.screen = pygame.display.set_mode((1380, 720))
             self.clock = pygame.time.Clock()
             self.font = pygame.font.Font("arial.ttf", 32)
+
         self.handleEvents()
         self.screen.fill("black")
+
+        # Draw all the lines
         for line in self.circuitLines:
             line.draw(self.screen)
         self.pointLines[self.car.currentLine].draw(self.screen)
-        rotatedCarImg = pygame.transform.rotate(self.car.img, self.car.angle)
         for raycast in self.car.raycastlines:
             raycast.draw(self.screen)
+
         pygame.draw.rect(self.screen, "orange", self.car.hitbox, 1)
+
+        rotatedCarImg = pygame.transform.rotate(self.car.img, self.car.angle)
         self.screen.blit(rotatedCarImg, (self.car.x, self.car.y))
+
         self.infoLines()
-        text = self.font.render(str(self.car.points), True, "white", "black")
-        textRect = text.get_rect()
-        textRect.centerx += 5
-        textRect.centery += 5
-        times = time.time() - self.starttime
-        text2 = self.font.render(str(times.__round__(0)), True, "white", "black")
-        textRect2 = text2.get_rect()
-        textRect2.centerx += 640
-        textRect2.centery += 360
-        self.screen.blit(text, textRect)
-        self.screen.blit(text2, textRect2)
+
         pygame.display.flip()
         self.clock.tick(60)
 

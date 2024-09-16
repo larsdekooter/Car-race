@@ -13,7 +13,7 @@ for i in tqdm(range(4366728)):
     final_move = [0, 0, 0, 0, 0]
     move = network.getMove(state_old)
     final_move[move] = 1
-    reward, done, score = game.step(final_move)
+    reward, done, score = game.step(final_move, render=True)
     stateNew = network.getState(game)
     network.train(state_old, stateNew, move, reward, done)
     state_old = stateNew
