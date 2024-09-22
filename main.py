@@ -27,6 +27,7 @@ for i in tqdm(range(436675)):
 
 game = Game(True)
 state = network.getState(game)
+moves = []
 while True:
     action = network.getMove(state)
     finalmove = [0, 0, 0, 0]
@@ -35,6 +36,7 @@ while True:
     newState = network.getState(game)
     network.train(state, newState, action, reward, done)
     state = newState
+    moves.append(action)
     if done:
         print(
             f"Games: {network.ngames}, Score: {score}, Percentage: {round(100.0 * network.aiPerGame[network.ngames] / (network.aiPerGame[network.ngames] + network.randomPerGame[network.ngames]), 2)}%, Epsilon: {network.epsilon}"
@@ -44,3 +46,5 @@ while True:
         network.ngames += 1
         network.aiPerGame.append(0)
         network.randomPerGame.append(0)
+        print(moves)
+        break
