@@ -1,7 +1,26 @@
 import pygame
-from circuitline import CircuitLine
-from succesline import SuccesLine
 import numpy as np
+
+
+class CircuitLine:
+    def __init__(self, color, start: tuple[int, int], end: tuple[int, int]):
+        self.start = start
+        self.end = end
+        self.color = color
+
+    def draw(self, screen):
+        pygame.draw.line(screen, self.color, self.start, self.end)
+
+
+class PointLine:
+    def __init__(self, index: int, color, start: tuple[int, int], end: tuple[int, int]):
+        self.start = start
+        self.end = end
+        self.index = index
+        self.color = color
+
+    def draw(self, screen):
+        pygame.draw.line(screen, self.color, self.start, self.end)
 
 
 def circuit():
@@ -40,191 +59,33 @@ def circuit():
         CircuitLine("white", (1000, 410), (1000, 600)),
         CircuitLine("white", (1000, 600), (900, 650)),
     ]
-    # return [line0]
 
 
-def point_lines():
+def pointLines():
     return np.flip(
         [
-            SuccesLine(22, "green", (55, 599), (108, 583)),
-            SuccesLine(21, "green", (200, 699), (213, 652)),
-            SuccesLine(20, "green", (419, 698), (438, 650)),
-            SuccesLine(19, "green", (641, 699), (631, 652)),
-            SuccesLine(18, "green", (871, 700), (882, 650)),
-            SuccesLine(17, "green", (968, 632), (1130, 659)),
-            SuccesLine(16, "green", (999, 580), (1181, 580)),
-            SuccesLine(15, "green", (1000, 516), (1189, 530)),
-            SuccesLine(14, "green", (1000, 454), (1159, 425)),
-            SuccesLine(13, "green", (999, 408), (1102, 348)),
-            SuccesLine(12, "green", (951, 403), (949, 352)),
-            SuccesLine(11, "green", (838, 470), (830, 427)),
-            SuccesLine(10, "green", (708, 460), (701, 507)),
-            SuccesLine(9, "green", (561, 517), (568, 475)),
-            SuccesLine(8, "green", (512, 443), (560, 457)),
-            SuccesLine(7, "green", (573, 303), (635, 259)),
-            SuccesLine(6, "green", (469, 265), (474, 218)),
-            SuccesLine(5, "green", (262, 247), (276, 203)),
-            SuccesLine(4, "green", (161, 293), (117, 241)),
-            SuccesLine(3, "green", (55, 320), (140, 320)),
-            SuccesLine(2, "green", (50, 350), (117, 350)),
-            SuccesLine(1, "green", (42, 429), (93, 432)),
-            SuccesLine(0, "green", (52, 550), (103, 553)),
+            PointLine(22, "green", (55, 599), (108, 583)),
+            PointLine(21, "green", (200, 699), (213, 652)),
+            PointLine(20, "green", (419, 698), (438, 650)),
+            PointLine(19, "green", (641, 699), (631, 652)),
+            PointLine(18, "green", (871, 700), (882, 650)),
+            PointLine(17, "green", (968, 632), (1130, 659)),
+            PointLine(16, "green", (999, 580), (1181, 580)),
+            PointLine(15, "green", (1000, 516), (1189, 530)),
+            PointLine(14, "green", (1000, 454), (1159, 425)),
+            PointLine(13, "green", (999, 408), (1102, 348)),
+            PointLine(12, "green", (951, 403), (949, 352)),
+            PointLine(11, "green", (838, 470), (830, 427)),
+            PointLine(10, "green", (708, 460), (701, 507)),
+            PointLine(9, "green", (561, 517), (568, 475)),
+            PointLine(8, "green", (512, 443), (560, 457)),
+            PointLine(7, "green", (573, 303), (635, 259)),
+            PointLine(6, "green", (469, 265), (474, 218)),
+            PointLine(5, "green", (262, 247), (276, 203)),
+            PointLine(4, "green", (161, 293), (117, 241)),
+            PointLine(3, "green", (55, 320), (140, 320)),
+            PointLine(2, "green", (50, 350), (117, 350)),
+            PointLine(1, "green", (42, 429), (93, 432)),
+            PointLine(0, "green", (52, 550), (103, 553)),
         ]
     )
-
-
-gap = 100
-
-
-def circuit2(screen):
-    return [
-        CircuitLine(
-            pygame.draw.line(screen, "white", (20, 700), (1260, 700)),
-            (20, 700),
-            (1260, 700),
-        ),
-        CircuitLine(
-            pygame.draw.line(screen, "white", (1260, 700), (1260, 20)),
-            (1260, 700),
-            (1260, 20),
-        ),
-        CircuitLine(
-            pygame.draw.line(screen, "white", (1260, 20), (20, 20)),
-            (1260, 20),
-            (20, 20),
-        ),
-        CircuitLine(
-            pygame.draw.line(screen, "white", (20, 20), (20, 700)),
-            (20, 20),
-            (20, 700),
-        ),
-        # inner part
-        CircuitLine(
-            pygame.draw.line(
-                screen, "white", (20 + gap, 700 - gap), (1260 - gap, 700 - gap)
-            ),
-            (20 + gap, 700 - gap),
-            (1260 - gap, 700 - gap),
-        ),
-        CircuitLine(
-            pygame.draw.line(
-                screen, "white", (1260 - gap, 700 - gap), (1260 - gap, 20 + gap)
-            ),
-            (1260 - gap, 700 - gap),
-            (1260 - gap, 20 + gap),
-        ),
-        CircuitLine(
-            pygame.draw.line(
-                screen, "white", (1260 - gap, 20 + gap), (20 + gap, 20 + gap)
-            ),
-            (1260 - gap, 20 + gap),
-            (20 + gap, 20 + gap),
-        ),
-        CircuitLine(
-            pygame.draw.line(
-                screen, "white", (20 + gap, 20 + gap), (20 + gap, 700 - gap)
-            ),
-            (20 + gap, 20 + gap),
-            (20 + gap, 700 - gap),
-        ),
-    ]
-
-
-def point_lines2(screen):
-    return [
-        SuccesLine(
-            3,
-            lambda x: pygame.draw.line(screen, "green", (20, 540), (20 + gap, 540)),
-            (20, 540),
-            (20 + gap, 540),
-        ),
-        SuccesLine(
-            2,
-            lambda x: pygame.draw.line(screen, "green", (20, 350), (20 + gap, 350)),
-            (20, 350),
-            (20 + gap, 350),
-        ),
-        SuccesLine(
-            1,
-            lambda x: pygame.draw.line(screen, "green", (20, 140), (20 + gap, 140)),
-            (20, 140),
-            (20 + gap, 140),
-        ),
-        SuccesLine(
-            12,
-            lambda x: pygame.draw.line(screen, "green", (200, 20), (200, 20 + gap)),
-            (200, 20),
-            (200, 20 + gap),
-        ),
-        SuccesLine(
-            11,
-            lambda x: pygame.draw.line(screen, "green", (600, 20), (600, 20 + gap)),
-            (600, 20),
-            (600, 20 + gap),
-        ),
-        SuccesLine(
-            10,
-            lambda x: pygame.draw.line(screen, "green", (1100, 20), (1100, 20 + gap)),
-            (1100, 20),
-            (1100, 20 + gap),
-        ),
-        SuccesLine(
-            4,
-            lambda x: pygame.draw.line(screen, "green", (1260, 140), (1260 - gap, 140)),
-            (1260, 140),
-            (1260 - gap, 140),
-        ),
-        SuccesLine(
-            5,
-            lambda x: pygame.draw.line(screen, "green", (1260, 350), (1260 - gap, 350)),
-            (1260, 350),
-            (1260 - gap, 350),
-        ),
-        SuccesLine(
-            6,
-            lambda x: pygame.draw.line(screen, "green", (1260, 540), (1260 - gap, 540)),
-            (1260, 540),
-            (1260 - gap, 540),
-        ),
-        SuccesLine(
-            7,
-            lambda x: pygame.draw.line(screen, "green", (1100, 700), (1100, 700 - gap)),
-            (1100, 700),
-            (1100, 700 - gap),
-        ),
-        SuccesLine(
-            8,
-            lambda x: pygame.draw.line(screen, "green", (600, 700), (600, 700 - gap)),
-            (600, 700),
-            (600, 700 - gap),
-        ),
-        SuccesLine(
-            9,
-            lambda x: pygame.draw.line(screen, "green", (200, 700), (200, 700 - gap)),
-            (200, 700),
-            (200, 700 - gap),
-        ),
-    ]
-
-
-def circuit3(screen):
-    return [
-        CircuitLine(
-            pygame.draw.line(screen, "white", (1270, 710), (1270, 10)),
-            (1270, 710),
-            (1270, 10),
-        ),
-        CircuitLine(
-            pygame.draw.line(screen, "white", (1270, 10), (10, 10)),
-            (1270, 10),
-            (10, 10),
-        ),
-        CircuitLine(
-            pygame.draw.line(screen, "white", (10, 10), (10, 710)), (10, 10), (10, 710)
-        ),
-        CircuitLine(
-            pygame.draw.line(screen, "white", (1270, 710), (10, 710)),
-            (1270, 710),
-            (0, 710),
-        ),
-    ]

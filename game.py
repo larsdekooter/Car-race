@@ -1,145 +1,227 @@
-from car import Car
+from circuit import circuit, pointLines
 import pygame
-import circuit
-import time
 import data
+import math
+from time import time
+from util import findIntersections
+
+
+class RaycastLine:
+    def __init__(self, x, y, direction, width=0):
+        self.x = x
+        self.y = y
+        length = data.raycastLength
+        self.end = (x + direction[0] * length, y + direction[1] * length)
+        self.width = width
+        self.start = (x, y)
+
+    def draw(self, screen):
+        pygame.draw.line(screen, "white", self.start, self.end, self.width)
+
+    def point(self, lines):
+        return findIntersections(self, lines)
+
+
+class Car:
+    def __init__(self) -> None:
+        self.reset()
+        self.img = pygame.transform.scale(pygame.image.load("car.png"), (25, 25))
+
+    def reset(self):
+        self.position = (data.x, data.y)
+        self.x = data.x
+        self.y = data.y
+        self.angle = 0
+        self.speed = 0
+        self.acceleration = 0.2
+        self.deceleration = 0.5
+        self.turnSpeed = 1
+        self.maxSpeed = 10
+        self.score = 0
+        self.currentLine = 0
+        self.initRaycasts(1)
+
+        self.updateHitbox()
+
+    def move(self, moves):
+        if moves[0] == 1:  # backwards
+            self.speed += self.acceleration
+            if self.speed > self.maxSpeed:
+                self.speed = self.maxSpeed
+        elif moves[1] == 1:  # forwards
+            self.speed -= self.deceleration
+            if self.speed < -self.maxSpeed:
+                self.speed = -self.maxSpeed
+        else:
+            if self.speed > 0:
+                self.speed -= self.deceleration
+            elif self.speed < 0:
+                self.speed += self.deceleration
+
+        if moves[2] == 1:  # left
+            self.angle += self.turnSpeed
+            if self.angle > 360:
+                self.angle -= 360
+        elif moves[3] == 1:  # right
+            self.angle -= self.turnSpeed
+            if self.angle < -360:
+                self.angle += 360
+
+        radians = self.angle * (math.pi / 180)
+        self.x += self.speed * math.sin(radians)
+        self.y += self.speed * math.cos(radians)
+        self.updateHitbox()
+
+    def updateHitbox(self):
+        self.hitbox = pygame.Rect(self.x, self.y, 25, 25)
+
+    def initRaycasts(self, width=0):
+        self.raycasts = [
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                self.getLookingDirection(self.angle),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                (
+                    -self.getLookingDirection(self.angle)[0],
+                    -self.getLookingDirection(self.angle)[1],
+                ),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                self.getLookingDirection(self.angle + 90),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                self.getLookingDirection(self.angle - 90),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                self.getLookingDirection(self.angle - 45),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                self.getLookingDirection(self.angle + 45),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                (
+                    -self.getLookingDirection(self.angle - 45)[0],
+                    -self.getLookingDirection(self.angle - 45)[1],
+                ),
+                width,
+            ),
+            RaycastLine(
+                self.x + 10,
+                self.y + 10,
+                (
+                    -self.getLookingDirection(self.angle + 45)[0],
+                    -self.getLookingDirection(self.angle + 45)[1],
+                ),
+                width,
+            ),
+        ]
+
+    def getLookingDirection(self, angle):
+        radians = math.radians(angle)
+        return (math.sin(radians), math.cos(radians))
 
 
 class Game:
-    def __init__(self):
-        self.s = time.time()
-        self.car = Car()
-        self.starttime = time.time()
-        self.closestDistance = None
-        self.record = 0
-        self.ngames = 0
-        self.percentage = 0
-        self.pointLines = circuit.point_lines()
-        self.circuitLines = circuit.circuit()
+    def __init__(self, render: bool):
+        self.shouldRender = render
+        self.circuit = circuit()
+        self.pointLines = pointLines()
         self.screen = None
+        self.car = Car()
+        self.reset()
+
+    def reset(self):
+        self.car.reset()
+        self.startTime = time()
+
+    def text(self, text, x, y):
+        self.screen.blit(self.font.render(text, True, "white"), (x, y))
 
     def infoLines(self):
-        pygame.draw.line(self.screen, "white", (1200, 0), (1200, 720), 1)
-        self.text(
-            "Speed: "
-            + str(
-                round(self.car.speed, 4)
-                if self.car.speed >= 0
-                else -round(self.car.speed, 4)
-            ),
-            1210,
-            5,
-        )
-        self.text("Angle: " + str(self.car.angle), 1210, 35)
-        self.text(
-            "dX: "
-            + str(
-                int(self.car.currentDistance(self.pointLines[self.car.currentLine])[0])
-            ),
-            1210,
-            70,
-        )
-        self.text("rew: " + str(int(self.car.rewardThisGame)), 1210, 105)
-        self.text("x " + str(int(self.car.x)), 1210, 140)
-        self.text("y " + str(int(self.car.y)), 1210, 175)
-        self.text("R " + str(self.record), 1210, 210)
-        self.text("nG " + str(self.ngames), 1210, 245)
-        self.text(str(self.percentage) + "%", 1210, 280)
-        self.text("h" + str(round((time.time() - self.s) / 3600, 2)), 1210, 315)
-        self.text(str(self.car.points), 5, 5)
-        self.text(str(round(time.time() - self.starttime, 0)), 640, 360)
-
-    def text(self, text: str, x: int, y: int):
-        fo = self.font.render(text, True, "white", "black")
-        foT = fo.get_rect()
-        foT.centerx += x
-        foT.centery += y
-        self.screen.blit(fo, foT)
+        self.text(f"{self.car.score}", 5, 5)
+        self.text(f"{int(time() - self.startTime)}", 640, 360)
 
     def render(self):
-        # Initialize pygame if not already initialized
         if self.screen is None:
             pygame.init()
-            self.screen = pygame.display.set_mode((1380, 720))
+            self.screen = pygame.display.set_mode((1280, 720))
             self.clock = pygame.time.Clock()
             self.font = pygame.font.Font("arial.ttf", 32)
-
-        self.handleEvents()
-        self.screen.fill("black")
-
-        # Draw all the lines
-        for line in self.circuitLines:
-            line.draw(self.screen)
-        self.pointLines[self.car.currentLine].draw(self.screen)
-        for raycast in self.car.raycastlines:
-            raycast.draw(self.screen)
-
-        pygame.draw.rect(self.screen, "orange", self.car.hitbox, 1)
-
-        rotatedCarImg = pygame.transform.rotate(self.car.img, self.car.angle)
-        self.screen.blit(rotatedCarImg, (self.car.x, self.car.y))
-
-        self.infoLines()
-
-        pygame.display.flip()
-        self.clock.tick(60)
-
-    def step(self, moves, render=False):
-        self.car.move(moves)
-        reward = 0
-        hitbox = pygame.Rect(self.car.x, self.car.y, 20, 20)
-        done = self.checkCircuitCollisions(hitbox)
-        reward = self.handleRewards(hitbox)
-
-        if time.time() - self.starttime > data.time:
-            done = True
-        if render:
-            self.render()
-        return reward, done, self.car.points
-
-    def handleRewards(self, hitbox):
-        reward = data.timeStepPenalty
-        if self.checkPointCollissions(hitbox):
-            distanceDriven = self.car.getDistanceDriven()
-            if distanceDriven > 1:
-                reward = data.lineReward / (distanceDriven * data.distancePenalty)
-            else:
-                reward = 100
-        if self.checkCircuitCollisions(hitbox):
-            reward = data.hitCost
-
-        return reward
-
-    def handleEvents(self):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
 
-    def checkCircuitCollisions(self, hitbox: pygame.Rect):
-        for line in self.circuitLines:
-            if bool(hitbox.clipline(line.start, line.end)):
-                return True
-        return False
+        self.screen.fill("black")
 
-    def checkPointCollissions(self, hitbox: pygame.Rect):
-        for line in self.pointLines:
-            if not line.isDrawn:
-                pass
-            elif hitbox.clipline(line.start, line.end):
-                index = line.i
-                if self.car.lastLine == index:
-                    pass
-                else:
-                    self.car.lastLine = index
-                    self.car.points += 1
-                    self.car.currentLine += 1
-                    if self.car.currentLine == len(self.pointLines):
-                        self.car.currentLine = 0
-                    return True
+        for line in self.circuit:
+            line.draw(self.screen)
 
-    def reset(self):
-        self.car.reset()
-        self.starttime = time.time()
-        self.closestDistance = None
+        img = pygame.transform.rotate(self.car.img, self.car.angle)
+        self.screen.blit(img, (self.car.x, self.car.y))
+
+        self.pointLines[self.car.currentLine].draw(self.screen)
+
+        self.infoLines()
+
+        pygame.display.flip()
+        self.clock.tick(60)
+
+    def step(self, moves):
+        self.car.move(moves)
+        self.car.initRaycasts(1)
+
+        wall, point = self.checkCollision()
+
+        if point:
+            self.car.currentLine += 1
+            self.car.score += 1
+
+        if self.car.currentLine >= len(self.pointLines):
+            self.car.currentLine = 0
+
+        if time() - self.startTime > data.timeLimit:
+            self.reset()
+
+        if self.shouldRender:
+            self.render()
+        return self.reward(wall, point), wall, self.car.score
+
+    def reward(self, wall, point):
+        if wall:
+            return -1000
+        elif point:
+            return 1000
+        else:
+            return 1
+
+    def checkCollision(self):
+        circuit = False
+        for line in self.circuit:
+            if bool(self.car.hitbox.clipline(line.start, line.end)):
+                return True, False
+        currentLine = self.pointLines[self.car.currentLine]
+        if bool(self.car.hitbox.clipline(currentLine.start, currentLine.end)):
+            return False, True
+        return False, False

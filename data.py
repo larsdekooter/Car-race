@@ -1,27 +1,12 @@
-lr = 10**-4
-gamma = 0.99
-hiddenSize = 128
-maxEpsilon = 1
-minEpsilon = 0.001
-decayRate = 1e-5
-maxSpeed = 5
 x = 75
 y = 570
-accelaration = 0.2
-decelaration = 0.5
-turnSpeed = 5
-lineReward = 10
-timeReward = 0
-raycastLength = 500
-distanceReward = 100
-hitCost = -100
-time = 60
+
+timeLimit = 60
+lr = 1e-4
+
+raycastLength = 800
+minEpsilon = 0.001
+maxEpsilon = 1
+decayRate = 1e-4
 batchSize = 1000
-timeStepPenalty = -1  # .1
-distancePenalty = 1.001
-circlePenalty = 200
-displacementThreshold = 0.2
-targetUpdate = 10
-entropy_regularization_weight = 0.1
-inputSize = 13
-outputSize = 4
+gamma = 0.99
