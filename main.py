@@ -8,7 +8,7 @@ network = Network()
 
 state = network.getState(game)
 
-for i in tqdm(range(4366728)):
+for i in tqdm(range(436675)):
     action = network.getMove(state)
     finalmove = [0, 0, 0, 0]
     finalmove[action] = 1
