@@ -46,7 +46,7 @@ while True:
         network.ngames += 1
         network.aiPerGame.append(0)
         network.randomPerGame.append(0)
-        file = open("new.txt")
+        file = open("moves.txt", "w")
         file.write(str(moves))
-        print(moves)
+        file.close()
         break
