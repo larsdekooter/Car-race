@@ -213,8 +213,8 @@ class Game:
             return -1000
         elif point:
             return 1000
-        # else:
-        #     return 1
+        else:
+            return 0
 
     def checkCollision(self):
         for line in self.circuit:
