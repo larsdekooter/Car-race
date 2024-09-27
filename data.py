@@ -5,7 +5,7 @@ timeLimit = 60
 lr = 1e-4
 
 raycastLength = 800
-minEpsilon = 0.001
+minEpsilon = 0.0001
 maxEpsilon = 1
 decayRate = 1e-4
 batchSize = 1000

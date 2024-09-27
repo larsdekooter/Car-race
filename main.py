@@ -22,7 +22,7 @@ for i in tqdm(range(436675)):
         network.ngames += 1
         network.aiPerGame.append(0)
         network.randomPerGame.append(0)
-        if network.epsilon <= data.minEpsilon:
+        if network.epsilon <= 0.01:
             break
 
 game = Game(True)

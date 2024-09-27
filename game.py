@@ -213,11 +213,10 @@ class Game:
             return -1000
         elif point:
             return 1000
-        else:
-            return 1
+        # else:
+        #     return 1
 
     def checkCollision(self):
-        circuit = False
         for line in self.circuit:
             if bool(self.car.hitbox.clipline(line.start, line.end)):
                 return True, False
