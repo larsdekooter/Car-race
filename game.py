@@ -209,12 +209,12 @@ class Game:
         return self.reward(wall, point), wall, self.car.score
 
     def reward(self, wall, point):
+        reward = 0
         if wall:
-            return -1000
+            reward += -1000
         elif point:
-            return 1000
-        else:
-            return 0
+            reward += 1000
+        return reward + self.car.score
 
     def checkCollision(self):
         for line in self.circuit:
