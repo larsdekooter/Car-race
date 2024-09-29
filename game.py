@@ -214,7 +214,7 @@ class Game:
             reward += -1000
         elif point:
             reward += 1000
-        return reward + self.car.score
+        return reward + (self.car.score * 100)
 
     def checkCollision(self):
         for line in self.circuit:
