@@ -5,7 +5,7 @@ import data
 import torch.optim as optim
 from collections import deque
 from game import Game
-from util import getDistanceToPoint, getDistanceToLine
+from util import getDistanceToPoint, getDistanceToLine, getAngleToLine
 import random
 
 
@@ -26,8 +26,8 @@ class DQN(nn.Module):
 
 class Network:
     def __init__(self):
-        self.model = DQN(13, 4)
-        self.targetModel = DQN(13, 4)
+        self.model = DQN(14, 4)
+        self.targetModel = DQN(14, 4)
         self.updateTargetModel()
         self.optimizer = optim.Adam(self.model.parameters(), lr=data.lr)
         self.criterion = nn.MSELoss()
@@ -49,7 +49,10 @@ class Network:
             distanceToWalls.append(distances)
 
         currentLine = game.pointLines[game.car.currentLine]
-        distance = getDistanceToLine(game.car.x, game.car.y, currentLine)
+        distanceToLine = getDistanceToLine(game.car.x, game.car.y, currentLine)
+        angleToLine = getAngleToLine(
+            game.car.x, game.car.y, game.car.angle, currentLine
+        )
 
         state = [
             np.min(distanceToWalls[0]) if len(distanceToWalls[0]) > 0 else 1000,
@@ -60,7 +63,8 @@ class Network:
             np.min(distanceToWalls[5]) if len(distanceToWalls[5]) > 0 else 1000,
             np.min(distanceToWalls[6]) if len(distanceToWalls[6]) > 0 else 1000,
             np.min(distanceToWalls[7]) if len(distanceToWalls[7]) > 0 else 1000,
-            distance,
+            distanceToLine,
+            angleToLine,
             game.car.x,
             game.car.y,
             game.car.speed,
