@@ -6,6 +6,8 @@ game = Game(False)
 network = Network()
 
 state = network.getState(game)
+record = 0
+
 
 for i in tqdm(range(47384)):
     action = network.getMove(state)
@@ -16,6 +18,8 @@ for i in tqdm(range(47384)):
     network.train(state, newState, action, reward, done)
     state = newState
     if done:
+        if game.car.score > record:
+           record = game.car.score
         game.reset()
         state = network.getState(game)
         network.ngames += 1
@@ -38,7 +42,7 @@ while True:
     # moves.append(action)
     if done:
         print(
-            f"Games: {network.ngames}, Score: {score}, Percentage: {round(100.0 * network.aiPerGame[network.ngames] / (network.aiPerGame[network.ngames] + network.randomPerGame[network.ngames]), 2)}%, Epsilon: {network.epsilon}"
+            f"Games: {network.ngames}, Score: {score}, Percentage: {round(100.0 * network.aiPerGame[network.ngames] / (network.aiPerGame[network.ngames] + network.randomPerGame[network.ngames]), 2)}%, Epsilon: {network.epsilon}, Record: {record}"
         )
         game.reset()
         state = network.getState(game)
