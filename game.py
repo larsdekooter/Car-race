@@ -211,10 +211,32 @@ class Game:
     def reward(self, wall, point):
         reward = 0
         if wall:
-            reward += -1000
+            reward -= 1000  # Significant penalty for hitting a wall
         elif point:
-            reward += 1000
-        return reward + (self.car.score * 100)
+            reward += 500  # Moderate reward for reaching a checkpoint
+
+        # Reward for distance traveled
+        distance_reward = self.car.speed * 0.1
+        reward += distance_reward
+
+        # Reward for staying on track
+        # on_track_reward = 1 - min(self.car.distance_from_center / self.track_width, 1)
+        # reward += on_track_reward * 10
+
+        # Reward for maintaining a good speed
+        optimal_speed = 50  # Adjust this value based on your game's mechanics
+        speed_reward = 1 - abs(self.car.speed - optimal_speed) / optimal_speed
+        reward += speed_reward * 5
+
+        # Penalty for time elapsed
+        time_penalty = (time() - self.startTime) * 0.1
+        reward -= time_penalty
+
+        # Bonus for completing a lap
+        if self.car.currentLine == 0 and point:
+            reward += 2000
+
+        return reward
 
     def checkCollision(self):
         for line in self.circuit:
