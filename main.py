@@ -15,7 +15,7 @@ for i in tqdm(range(4644080)):
     finalmove[action] = 1
     reward, done, score = game.step(finalmove)
     newState = network.getState(game)
-    network.train(state, newState, action, reward, done)
+    # network.train(state, newState, action, reward, done)
     state = newState
     if done:
         if game.car.score > record:
@@ -37,7 +37,7 @@ while True:
     finalmove[action] = 1
     reward, done, score = game.step(finalmove)
     newState = network.getState(game)
-    network.train(state, newState, action, reward, done)
+    # network.train(state, newState, action, reward, done)
     state = newState
     # moves.append(action)
     if done:
