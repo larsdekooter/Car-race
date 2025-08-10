@@ -194,6 +194,7 @@ class Game:
 
         wall, point = self.checkCollision()
 
+        # checkpoint handling
         if point:
             self.car.currentLine += 1
             self.car.score += 1
@@ -201,42 +202,44 @@ class Game:
         if self.car.currentLine >= len(self.pointLines):
             self.car.currentLine = 0
 
-        if time() - self.startTime > data.timeLimit:
-            self.reset()
+        # compute reward and done
+        reward, done = self.reward(wall, point)
 
         if self.shouldRender:
             self.render()
-        return self.reward(wall, point), wall, self.car.score
+
+        if done:
+            # keep a deterministic reset behaviour (caller expects to handle logging)
+            return reward, True, self.car.score
+
+        # normal step return
+        return reward, False, self.car.score
 
     def reward(self, wall, point):
-        reward = 0
+        # immediate big penalty or bonus
         if wall:
-            reward -= 1000  # Significant penalty for hitting a wall
-        elif point:
-            reward += 500  # Moderate reward for reaching a checkpoint
+            return -1000.0, True   # collision ends episode
+        reward = 0.0
+        if point:
+            reward += 500.0
 
-        # Reward for distance traveled
-        distance_reward = self.car.speed * 0.1
-        reward += distance_reward
+        # small per-step penalty to discourage dithering
+        reward += -0.01
 
-        # Reward for staying on track
-        # on_track_reward = 1 - min(self.car.distance_from_center / self.track_width, 1)
-        # reward += on_track_reward * 10
+        # reward for forward speed (prefer forward motion)
+        # note: car.speed can be negative; prefer positive forward speed
+        forward_speed_reward = max(0.0, self.car.speed) * 0.2
+        reward += forward_speed_reward
 
-        # Reward for maintaining a good speed
-        optimal_speed = 50  # Adjust this value based on your game's mechanics
-        speed_reward = 1 - abs(self.car.speed - optimal_speed) / optimal_speed
-        reward += speed_reward * 5
-
-        # Penalty for time elapsed
-        time_penalty = (time() - self.startTime) * 0.1
-        reward -= time_penalty
-
-        # Bonus for completing a lap
+        # small reward for checkpoint / lap completion (keep as-is)
         if self.car.currentLine == 0 and point:
-            reward += 2000
+            reward += 2000.0
 
-        return reward
+        # timeout -> end episode (if elapsed time exceeds limit)
+        if time() - self.startTime > data.timeLimit:
+            return reward, True
+
+        return reward, False
 
     def checkCollision(self):
         for line in self.circuit:
