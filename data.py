@@ -8,5 +8,5 @@ raycastLength = 800
 minEpsilon = 0.0001
 maxEpsilon = 1
 decayRate = 1e-5
-batchSize = 1000
+batchSize = 128
 gamma = 0.99
