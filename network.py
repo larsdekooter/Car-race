@@ -97,15 +97,16 @@ class Network:
         newStates = torch.tensor(np.array(newStates), dtype=torch.float32)
         actions = torch.tensor(actions, dtype=torch.long).unsqueeze(1)
         rewards = torch.tensor(rewards, dtype=torch.float32)
-        dones = torch.tensor(dones, dtype=torch.bool)
+        dones = torch.tensor(dones, dtype=torch.float32)
 
         currentQValues = self.model(states).gather(1, actions)
-        nextQValues = self.targetModel(newStates).max(1)[0]
-        targetQValues = rewards + data.gamma * nextQValues * (~dones)
+        nextQValues = self.targetModel(newStates).max(1)[0].detach()
+        targetQValues = rewards + data.gamma * nextQValues * (1.0 - dones)
 
         loss = self.criterion(currentQValues, targetQValues.unsqueeze(1))
         self.optimizer.zero_grad()
         loss.backward()
+        torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
         self.optimizer.step()
 
         if self.step % 100 == 0:
