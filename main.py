@@ -9,24 +9,24 @@ state = network.getState(game)
 record = 0
 
 
-for i in tqdm(range(4644080)):
-    action = network.getMove(state)
-    finalmove = [0, 0, 0, 0]
-    finalmove[action] = 1
-    reward, done, score = game.step(finalmove)
-    newState = network.getState(game)
+#for i in tqdm(range(4644080)):
+    #action = network.getMove(state)
+   # finalmove = [0, 0, 0, 0]
+   # finalmove[action] = 1
+   # reward, done, score = game.step(finalmove)
+  #  newState = network.getState(game)
     # network.train(state, newState, action, reward, done)
-    state = newState
-    if done:
-        if game.car.score > record:
-            record = game.car.score
-        game.reset()
-        state = network.getState(game)
-        network.ngames += 1
-        network.aiPerGame.append(0)
-        network.randomPerGame.append(0)
-        if network.epsilon <= 0.01:
-            break
+  #  state = newState
+ #   if done:
+     #   if game.car.score > record:
+   #         record = game.car.score
+   #     game.reset()
+   #     state = network.getState(game)
+   #     network.ngames += 1
+    #    network.aiPerGame.append(0)
+    #    network.randomPerGame.append(0)
+     #   if network.epsilon <= 0.01:
+       #     break
 
 game = Game(True)
 state = network.getState(game)
