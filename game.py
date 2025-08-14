@@ -224,16 +224,20 @@ class Game:
             reward += 500.0
 
         # small per-step penalty to discourage dithering
-        reward += -0.01
+        reward += -0.001
 
         # reward for forward speed (prefer forward motion)
         # note: car.speed can be negative; prefer positive forward speed
-        forward_speed_reward = max(0.0, self.car.speed) * 0.2
+        forward_speed_reward = max(0.0, self.car.speed) * 1.0
         reward += forward_speed_reward
 
         # small reward for checkpoint / lap completion (keep as-is)
         if self.car.currentLine == 0 and point:
             reward += 2000.0
+
+        # Add survival bonus to encourage staying alive
+        survival_bonus = 0.1
+        reward += survival_bonus
 
         # timeout -> end episode (if elapsed time exceeds limit)
         if time() - self.startTime > data.timeLimit:

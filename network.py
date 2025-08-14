@@ -26,8 +26,8 @@ class DQN(nn.Module):
 
 class Network:
     def __init__(self):
-        self.model = DQN(14, 4)
-        self.targetModel = DQN(14, 4)
+        self.model = DQN(12, 4)
+        self.targetModel = DQN(12, 4)
         self.updateTargetModel()
         self.optimizer = optim.Adam(self.model.parameters(), lr=data.lr)
         self.criterion = nn.MSELoss()
@@ -65,8 +65,6 @@ class Network:
             np.min(distanceToWalls[7]) if len(distanceToWalls[7]) > 0 else 1000,
             distanceToLine,
             angleToLine,
-            game.car.x,
-            game.car.y,
             game.car.speed,
             game.car.angle,
         ]
@@ -78,12 +76,19 @@ class Network:
             -data.decayRate * self.step
         )
         self.step += 1
+        
+        # Add some exploration noise even when using learned policy
         if np.random.rand() < self.epsilon:
             self.randomPerGame[self.ngames] += 1
             return random.randint(0, 3)
         else:
             self.aiPerGame[self.ngames] += 1
-            return self.model(torch.tensor(state, dtype=torch.float32)).argmax().item()
+            # Add small amount of noise to prevent getting stuck in local optima
+            q_values = self.model(torch.tensor(state, dtype=torch.float32))
+            if np.random.rand() < 0.1:  # 10% chance of adding noise
+                noise = torch.randn_like(q_values) * 0.1
+                q_values = q_values + noise
+            return q_values.argmax().item()
 
     def train(self, state, newState, action, reward, done):
         self.memory.append((state, newState, action, reward, done))

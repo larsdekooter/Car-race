@@ -8,25 +8,25 @@ network = Network()
 state = network.getState(game)
 record = 0
 
-
-#for i in tqdm(range(4644080)):
-    #action = network.getMove(state)
-   # finalmove = [0, 0, 0, 0]
-   # finalmove[action] = 1
-   # reward, done, score = game.step(finalmove)
-  #  newState = network.getState(game)
-    # network.train(state, newState, action, reward, done)
-  #  state = newState
- #   if done:
-     #   if game.car.score > record:
-   #         record = game.car.score
-   #     game.reset()
-   #     state = network.getState(game)
-   #     network.ngames += 1
-    #    network.aiPerGame.append(0)
-    #    network.randomPerGame.append(0)
-     #   if network.epsilon <= 0.01:
-       #     break
+# Training loop - uncomment to train the AI
+for i in tqdm(range(10000)):  # Reduced from 4644080 to 10000 for faster training
+    action = network.getMove(state)
+    finalmove = [0, 0, 0, 0]
+    finalmove[action] = 1
+    reward, done, score = game.step(finalmove)
+    newState = network.getState(game)
+    network.train(state, newState, action, reward, done)
+    state = newState
+    if done:
+        if game.car.score > record:
+            record = game.car.score
+        game.reset()
+        state = network.getState(game)
+        network.ngames += 1
+        network.aiPerGame.append(0)
+        network.randomPerGame.append(0)
+        if network.epsilon <= 0.01:
+            break
 
 game = Game(True)
 state = network.getState(game)
@@ -37,7 +37,7 @@ while True:
     finalmove[action] = 1
     reward, done, score = game.step(finalmove)
     newState = network.getState(game)
-    # network.train(state, newState, action, reward, done)
+    network.train(state, newState, action, reward, done)  # Enable online learning
     state = newState
     # moves.append(action)
     if done:
