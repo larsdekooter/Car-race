@@ -250,7 +250,7 @@ class Game:
         currentLine = self.pointLines[self.car.currentLine]
         if bool(self.car.hitbox.clipline(currentLine.start, currentLine.end)):
             return False, True, False
-        for line in self.pointLines:
-            if bool(self.car.hitbox.clipline(line.start, line.end)) and np.where(self.pointLines == line).index(line) < self.car.currentLine:
+        for i in range(self.pointLines):
+            if i < self.car.currentLine and bool(self.car.hitbox.clipline(self.pointLines[i].start, self.pointLines[i].end)):
                 return False, False, True
         return False, False, False
