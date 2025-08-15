@@ -4,6 +4,7 @@ import data
 import math
 from time import time
 from util import findIntersections
+import numpy as np
 
 
 class RaycastLine:
@@ -250,6 +251,6 @@ class Game:
         if bool(self.car.hitbox.clipline(currentLine.start, currentLine.end)):
             return False, True, False
         for line in self.pointLines:
-            if bool(self.car.hitbox.clipline(line.start, line.end)) and self.pointLines.index(line) < self.car.currentLine:
+            if bool(self.car.hitbox.clipline(line.start, line.end)) and np.where(self.pointLines == line).index(line) < self.car.currentLine:
                 return False, False, True
         return False, False, False
