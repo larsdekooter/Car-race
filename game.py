@@ -181,7 +181,9 @@ class Game:
         img = pygame.transform.rotate(self.car.img, self.car.angle)
         self.screen.blit(img, (self.car.x, self.car.y))
 
-        self.pointLines[self.car.currentLine].draw(self.screen)
+        # self.pointLines[self.car.currentLine].draw(self.screen)
+        for line in self.pointLines:
+            line.draw(self.screen)
 
         self.infoLines()
 
@@ -192,7 +194,7 @@ class Game:
         self.car.move(moves)
         self.car.initRaycasts(1)
 
-        wall, point = self.checkCollision()
+        wall, point, reversePoint = self.checkCollision()
 
         # checkpoint handling
         if point:
@@ -203,7 +205,7 @@ class Game:
             self.car.currentLine = 0
 
         # compute reward and done
-        reward, done = self.reward(wall, point)
+        reward, done = self.reward(wall, point, reversePoint)
 
         if self.shouldRender:
             self.render()
@@ -215,31 +217,26 @@ class Game:
         # normal step return
         return reward, False, self.car.score
 
-    def reward(self, wall, point):
-        # immediate big penalty or bonus
+    def reward(self, wall, point, reversePoint):
         if wall:
-            return -1000.0, True   # collision ends episode
+            return -1000.0, True   
         reward = 0.0
         if point:
             reward += 500.0
+        if reversePoint:
+            reward -= 500.0
 
-        # small per-step penalty to discourage dithering
         reward += -0.001
 
-        # reward for forward speed (prefer forward motion)
-        # note: car.speed can be negative; prefer positive forward speed
         forward_speed_reward = max(0.0, self.car.speed) * 1.0
         reward += forward_speed_reward
 
-        # small reward for checkpoint / lap completion (keep as-is)
         if self.car.currentLine == 0 and point:
             reward += 2000.0
 
-        # Add survival bonus to encourage staying alive
         survival_bonus = 0.1
         reward += survival_bonus
 
-        # timeout -> end episode (if elapsed time exceeds limit)
         if time() - self.startTime > data.timeLimit:
             return reward, True
 
@@ -248,8 +245,11 @@ class Game:
     def checkCollision(self):
         for line in self.circuit:
             if bool(self.car.hitbox.clipline(line.start, line.end)):
-                return True, False
+                return True, False, False
         currentLine = self.pointLines[self.car.currentLine]
         if bool(self.car.hitbox.clipline(currentLine.start, currentLine.end)):
-            return False, True
-        return False, False
+            return False, True, False
+        for line in self.pointLines:
+            if bool(self.car.hitbox.clipline(line.start, line.end)) and self.pointLines.index(line) < self.car.currentLine:
+                return False, False, True
+        return False, False, False
