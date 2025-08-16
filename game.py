@@ -5,7 +5,7 @@ import math
 from time import time
 from util import findIntersections
 import numpy as np
-from util.py import getDistanceToLine 
+from util import getDistanceToLine 
 
 
 class RaycastLine:
