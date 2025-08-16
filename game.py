@@ -218,12 +218,14 @@ class Game:
         # normal step return
         return reward, False, self.car.score
 
-    def reward(self, wall, point):
+    def reward(self, wall, point, reversePoint):
         if wall:
             return -1000.0, True
         reward = 0.0
         if point:
             reward += 500.0
+        if reversePoint:
+            reward -= 500.0
 
         # small per-step penalty to discourage dithering
         reward += -0.01  # increase penalty
