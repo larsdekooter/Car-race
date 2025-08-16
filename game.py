@@ -221,7 +221,7 @@ class Game:
 
     def reward(self, wall, point, reversePoint):
         if wall:
-            return -1000.0, True, self.car.score
+            return -1000.0, True
         reward = 0.0
         if point:
             reward += 500.0
