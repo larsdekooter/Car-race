@@ -225,6 +225,8 @@ class Game:
         reward = 0.0
         if point:
             reward += 500.0
+        if reversePoint:
+            reward -= 500.0
 
         # Small negative reward for each step
         reward -= 0.05
@@ -241,9 +243,9 @@ class Game:
             reward += 2000.0
 
         if time() - self.startTime > data.timeLimit:
-            return reward, True, self.car.score
+            return reward, True
 
-        return reward, False, self.car.score
+        return reward, False
 
     def checkCollision(self):
         for line in self.circuit:
