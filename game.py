@@ -220,39 +220,29 @@ class Game:
 
     def reward(self, wall, point, reversePoint):
         if wall:
-            return -1000.0, True
+            return -1000.0, True, self.car.score
         reward = 0.0
         if point:
             reward += 500.0
-        if reversePoint:
-            reward -= 500.0
 
-        # small per-step penalty to discourage dithering
-        reward += -0.01  # increase penalty
+        # Small negative reward for each step
+        reward -= 0.05
 
-        # reward for forward speed (prefer forward motion)
-        forward_speed_reward = max(0.0, self.car.speed) * 1.0
-        reward += forward_speed_reward
-
-        # Directional reward: encourage moving towards next checkpoint
+        # Reward for moving closer to the next checkpoint
         currentLine = self.pointLines[self.car.currentLine]
-        dx = currentLine.start[0] - self.car.x
-        dy = currentLine.start[1] - self.car.y
-        direction_to_line = math.atan2(dy, dx)
-        car_direction = math.radians(self.car.angle)
-        angle_diff = abs((direction_to_line - car_direction + math.pi) % (2 * math.pi) - math.pi)
-        reward += (math.cos(angle_diff) * 0.5)  # reward for facing checkpoint
+        prev_dist = getattr(self.car, "prev_dist", None)
+        dist = getDistanceToLine(self.car.x, self.car.y, currentLine)
+        if prev_dist is not None:
+            reward += (prev_dist - dist) * 2  # reward for reducing distance
+        self.car.prev_dist = dist
 
         if self.car.currentLine == 0 and point:
             reward += 2000.0
 
-        survival_bonus = 0.1
-        reward += survival_bonus
-
         if time() - self.startTime > data.timeLimit:
-            return reward, True
+            return reward, True, self.car.score
 
-        return reward, False
+        return reward, False, self.car.score
 
     def checkCollision(self):
         for line in self.circuit:
