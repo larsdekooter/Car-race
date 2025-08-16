@@ -9,7 +9,7 @@ state = network.getState(game)
 record = 0
 
 # Training loop - uncomment to train the AI
-for i in tqdm(range(10000)):  # Reduced from 4644080 to 10000 for faster training
+for i in tqdm(range(50000)):  # Reduced from 4644080 to 10000 for faster training
     action = network.getMove(state)
     finalmove = [0, 0, 0, 0]
     finalmove[action] = 1

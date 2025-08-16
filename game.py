@@ -218,19 +218,28 @@ class Game:
         # normal step return
         return reward, False, self.car.score
 
-    def reward(self, wall, point, reversePoint):
+    def reward(self, wall, point):
         if wall:
-            return -1000.0, True   
+            return -1000.0, True
         reward = 0.0
         if point:
             reward += 500.0
-        if reversePoint:
-            reward -= 500.0
 
-        reward += -0.001
+        # small per-step penalty to discourage dithering
+        reward += -0.01  # increase penalty
 
+        # reward for forward speed (prefer forward motion)
         forward_speed_reward = max(0.0, self.car.speed) * 1.0
         reward += forward_speed_reward
+
+        # Directional reward: encourage moving towards next checkpoint
+        currentLine = self.pointLines[self.car.currentLine]
+        dx = currentLine.start[0] - self.car.x
+        dy = currentLine.start[1] - self.car.y
+        direction_to_line = math.atan2(dy, dx)
+        car_direction = math.radians(self.car.angle)
+        angle_diff = abs((direction_to_line - car_direction + math.pi) % (2 * math.pi) - math.pi)
+        reward += (math.cos(angle_diff) * 0.5)  # reward for facing checkpoint
 
         if self.car.currentLine == 0 and point:
             reward += 2000.0
